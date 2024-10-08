@@ -1,0 +1,86 @@
+.gradient-button {
+    background: linear-gradient(45deg, #a8c0ff, #3f2b96);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 7px 14px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    float:right;
+    margin: 0 0 0 5px;
+}
+
+.textarea {
+    resize:none;
+    border-radius:10px;
+    padding: 10px 10px 10px 10px;
+}
+  
+.gradient-button:hover {
+    background: linear-gradient(45deg, #3f2b96, #a8c0ff);
+}
+
+.receiver {
+  width: 370px;
+  height: 300px;
+  background-color: #FFFFFF;
+  overflow:auto;
+  border-radius:10px;
+  margin-bottom:5px;
+  padding: 10px 10px 10px 10px;
+}
+
+/* 전체 컨테이너 스타일 */
+.container {
+    background: linear-gradient(#4A90E2, #C5D3FE);
+    /*background-color: #C5D3FE;*/ /* 전체 배경색 */
+    min-height: 100vh; /* 최소 높이 */
+    display: flex;
+    flex-direction: column; /* 수직 정렬 */
+  }
+  
+  /* 헤더 스타일 */
+  .header {
+    /*background-color: #4A90E2;*/ /* 헤더 배경색 */
+    color: #FFF;
+    padding: 10px 20px;
+    text-align: left;
+  }
+  
+  /* 메인 영역 스타일 */
+  .main {
+    display: flex; /* 내부 요소들을 가로로 정렬 */
+    gap: 50px;
+    padding: 20px; /* 패딩 추가 */
+    flex: 1; /* 가용 공간을 차지하도록 설정 */
+  }
+  
+  /* 메뉴와 사이드바 스타일 */
+  .menu {
+    display: flex; /* 내부 요소들을 가로로 정렬 */
+    gap: 20px;
+    padding: 20px; /* 패딩 추가 */
+    flex: 1; /* 가용 공간을 차지하도록 설정 */
+  }
+  
+  .sidebar {
+    background-color: #FFFFFF; /* 사이드바 배경색 */
+    width: 100px; /* 사이드바 너비 */
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
+  }
+  
+  .menu-item {
+    padding: 10px 0;
+    cursor: pointer; /* 마우스 포인터 커서 효과 */
+  }
+  
+  /* 풋터 스타일 */
+  .footer {
+    /*background-color: #C5D3FE;*/ /* 풋터 배경색 */
+    color: #FFF;
+    padding: 10px 20px;
+    text-align: center;
+    margin-top: auto; /* 풋터를 아래로 고정 */
+  }
