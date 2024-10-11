@@ -21,8 +21,18 @@
     background: linear-gradient(45deg, #3f2b96, #a8c0ff);
 }
 
+.sender {
+  width: 360px;
+  height: 20px;
+  background-color: #FFFFFF;
+  overflow:auto;
+  border-radius:10px;
+  margin-bottom:5px;
+  padding: 10px 10px 10px 10px;
+}
+
 .receiver {
-  width: 370px;
+  width: 360px;
   height: 300px;
   background-color: #FFFFFF;
   overflow:auto;

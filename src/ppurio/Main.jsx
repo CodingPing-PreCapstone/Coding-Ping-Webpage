@@ -1,6 +1,6 @@
 import React from "react";
 import Input from "./Input";
-import Result from "./Result";
+import PhoneSet from "./PhoneSet";
 import './ppurio.css';
 
 function Main(props) {
@@ -20,7 +20,7 @@ function Main(props) {
                 </div>
                 <div className="main">
                     <Input />
-                    <Result />
+                    <PhoneSet />
                 </div>
             </div>
             <footer className="footer">
