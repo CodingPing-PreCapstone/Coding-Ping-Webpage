@@ -1,14 +1,29 @@
+
 .gradient-button {
-    background: linear-gradient(45deg, #a8c0ff, #3f2b96);
-    border: none;
-    border-radius: 5px;
-    color: white;
-    padding: 7px 14px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    float:right;
-    margin: 0 0 0 5px;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 7px 14px;
+  font-size: 16px;
+  margin: 0 0 0 5px;
+  float:right;
+}
+
+.gradient-button-login {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 7px 14px;
+  font-size: 16px;
+  margin: 5px 0 0 5px;
 }
 
 .textarea {
@@ -16,11 +31,19 @@
     border-radius:10px;
     padding: 10px 10px 10px 10px;
 }
-  
+
+.textarea-login {
+  resize:none;
+  border-radius:10px;
+  padding: 10px 10px 10px 10px;
+  padding: 7px 14px;
+  margin: 5px 5px 0 5px;
+}
+/*  
 .gradient-button:hover {
     background: linear-gradient(45deg, #3f2b96, #a8c0ff);
 }
-
+*/
 .sender {
   width: 360px;
   height: 20px;
@@ -41,6 +64,17 @@
   padding: 10px 10px 10px 10px;
 }
 
+.logout-button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 /* 전체 컨테이너 스타일 */
 .container {
     background: linear-gradient(#4A90E2, #C5D3FE);
@@ -49,6 +83,32 @@
     display: flex;
     flex-direction: column; /* 수직 정렬 */
   }
+.container-login {
+  background: linear-gradient(#4A90E2, #C5D3FE);
+    min-height: 100vh; /* 최소 높이 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* 수평 중앙 정렬 */
+    max-width: 1200px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 좌우 중앙 정렬 */
+    padding: 20px; /* 양쪽에 여백 추가 */
+    box-sizing: border-box;
+}
+.login-box {
+    background-color: #ffffff; /* 박스 배경 색상 */
+    padding: 40px; /* 내부 여백 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* 그림자 */
+    width: 100%;
+    max-width: 300px; /* 최대 너비 */
+    min-height: 300px; /* 최소 높이 설정 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 세로 중앙 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    text-align: center;
+}
   
   /* 헤더 스타일 */
   .header {

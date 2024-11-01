@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { createRoot } from "react-dom/client";
-import ImageAI from "./ImageAI";   // ImageAI 컴포넌트 불러오기
 import MessageAI from "./MessageAI"; // MessageAI 컴포넌트 불러오기
+import AIImageGenerator from "./AIImageGenerator";
 
 function Input() {
     const imagePopupRef = useRef(null);  // ImageAI 팝업 창을 참조하는 변수
@@ -11,7 +11,7 @@ function Input() {
     const handleOpenImagePopup = () => {
         // 창이 이미 열려 있는지 확인
         if (!imagePopupRef.current || imagePopupRef.current.closed) {
-            const newWindow = window.open("", "", "width=600,height=600");
+            const newWindow = window.open("", "", "width=1600,height=1000");
 
             if (newWindow) {
                 newWindow.document.title = "ImageAI 팝업 창";
@@ -22,7 +22,7 @@ function Input() {
 
                 // React 컴포넌트를 새 창에 렌더링
                 const root = createRoot(div);
-                root.render(<ImageAI />);  // ImageAI 컴포넌트를 렌더링
+                root.render(<AIImageGenerator />);  // ImageAI 컴포넌트를 렌더링
 
                 imagePopupRef.current = newWindow;
 
