@@ -6,9 +6,9 @@ function PhoneSet({ fromNumber, setFromNumber, toNumbers, setToNumbers }) {
     const [sendertext, setSenderText] = useState('');
 
     const formatPhoneNumber = (phoneNumber) => {
-        if (phoneNumber.length === 11) {
-            return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
-        }
+        //if (phoneNumber.length === 11) {
+        //    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+        //}
         return phoneNumber;
     }
 

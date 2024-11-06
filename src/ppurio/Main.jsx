@@ -20,7 +20,7 @@ function Main(props) {
 
     const handleSendMessage = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/send_message", {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/send_message`, {
                 title,
                 content,
                 fromNumber,
