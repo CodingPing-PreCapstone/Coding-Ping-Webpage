@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
 
-function PhoneSet() {
+function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");
-    const [submittedTexts, setSubmittedTexts] = useState([]);
     const [sendertext, setSenderText] = useState("");
-    const [sender, setSender] = useState("");
     const [addressBook, setAddressBook] = useState([]);
     const addressBookPopupRef = useRef(null);
 
@@ -50,7 +48,7 @@ function PhoneSet() {
     };
 
     const divClear = () => {
-        setSubmittedTexts([]);
+        setSubmittedTexts([]); // 수신 번호 배열 초기화
     };
 
     const saveAddressBook = () => {
@@ -63,14 +61,14 @@ function PhoneSet() {
         }
     };
 
-    const addAllToSubmittedTexts = (allContacts) => {
+    const addAllToSubmittedTexts = useCallback((allContacts) => {
         setSubmittedTexts((prevTexts) => {
             const uniqueContacts = allContacts.filter((contact) => !prevTexts.includes(contact));
             return [...prevTexts, ...uniqueContacts];
         });
-    };
+    }, [setSubmittedTexts]);
 
-    const addToSubmittedTexts = (contact) => {
+    const addToSubmittedTexts = useCallback((contact) => {
         setSubmittedTexts((prevTexts) => {
             if (!prevTexts.includes(contact)) {
                 return [...prevTexts, contact];
@@ -79,7 +77,7 @@ function PhoneSet() {
                 return prevTexts;
             }
         });
-    };
+    }, [setSubmittedTexts]);
 
     const handleOpenAddressBookPopup = () => {
         if (!addressBookPopupRef.current || addressBookPopupRef.current.closed) {
@@ -126,10 +124,29 @@ function PhoneSet() {
                 />
             );
         }
-    }, [addressBook]);
+    }, [addressBook, addAllToSubmittedTexts, addToSubmittedTexts]); // 의존성 배열에 추가
+
+    const handleSendMessage = () => {
+        if (!sender || submittedTexts.length === 0 || !inputMessage || !generatedImage || !title) {
+            alert("메세지를 보낼 때 필요한 정보가 충분하지 않습니다.");
+            return;
+        }
+
+        const receiverText = submittedTexts.join(", ");
+        const messageContent = `
+            제목: ${title}
+            발신 번호: ${sender}
+            수신 번호: ${receiverText}
+            메시지 내용: ${inputMessage}
+            생성된 이미지 URL: ${generatedImage}
+        `;
+
+        alert(messageContent);
+    };
 
     return (
         <div>
+            {/* UI 그대로 유지 */}
             <h3>{"발신번호 설정"}</h3>
             <textarea
                 className="textarea"
@@ -172,7 +189,7 @@ function PhoneSet() {
             </button>
             <br />
             <br />
-            <button type="button" className="gradient-button" onClick={() => alert("송신완료")}>
+            <button type="button" className="gradient-button" onClick={handleSendMessage}>
                 {"메세지 전송"}
             </button>
         </div>

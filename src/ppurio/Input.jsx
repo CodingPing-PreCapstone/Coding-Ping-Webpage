@@ -1,17 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import AIImageGenerator from "./AIImageGenerator";
 import AIMessageGenerator from "./AIMessageGenerator";
 import SavedImagesPopup from "./SavedImagesPopup";
 import SavedMessagesPopup from "./SavedMessagesPopup";
 
-function Input() {
+function Input({ 
+    inputMessage, 
+    setInputMessage, 
+    generatedImage, 
+    setGeneratedImage, 
+    savedMessages, 
+    setSavedMessages, 
+    savedImages, 
+    setSavedImages, 
+    title, 
+    setTitle // New props for the title
+}) {
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
-    const [generatedImage, setGeneratedImage] = useState(null);
-    const [generatedImages, setGeneratedImages] = useState([]);
-    const [inputMessage, setInputMessage] = useState("");
-    const [savedMessages, setSavedMessages] = useState([]);
 
     const handleOpenImagePopup = () => {
         if (!imagePopupRef.current || imagePopupRef.current.closed) {
@@ -53,7 +60,7 @@ function Input() {
 
     const handleSaveImage = () => {
         if (generatedImage) {
-            setGeneratedImages((prevImages) => [...prevImages, generatedImage]);
+            setSavedImages((prevImages) => [...prevImages, generatedImage]);
         }
     };
 
@@ -71,7 +78,7 @@ function Input() {
             const div = newWindow.document.createElement("div");
             newWindow.document.body.appendChild(div);
             const root = createRoot(div);
-            root.render(<SavedImagesPopup images={generatedImages} onAddImage={setGeneratedImage} />);
+            root.render(<SavedImagesPopup images={savedImages} onAddImage={setGeneratedImage} />);
         }
     };
 
@@ -94,6 +101,8 @@ function Input() {
                 placeholder={"제목을 입력해주세요.(최대30byte, 발송관리용)"}
                 cols={50}
                 rows={1}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)} // Update title state
             ></textarea>
             <br />
             <textarea
