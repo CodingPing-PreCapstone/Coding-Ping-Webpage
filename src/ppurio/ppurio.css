@@ -9,7 +9,7 @@
   border-radius: 5px;
   padding: 7px 14px;
   font-size: 16px;
-  margin: 0 0 0 5px;
+  margin: 7px 0 0 5px;
   float:right;
 }
 
@@ -24,6 +24,35 @@
   padding: 7px 14px;
   font-size: 16px;
   margin: 5px 0 0 5px;
+}
+
+.generated-image-area{
+  width: 360px;
+  height: 180px;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  border-radius:10px;
+  margin-bottom:5px;
+  padding: 10px 10px 10px 10px;
+}
+
+.placeholder {
+  width: 30%;
+  height: 80%;
+  border-radius: 12px; /* 모서리를 둥글게 */
+  border: 2px dashed #ccc; /* 점선 테두리 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #b0b0b0;
+}
+
+.plus-icon {
+  font-size: 48px;
+  color: #ccc;
+  font-weight: bold;
+  transform: translateY(-10%); /* 위로 약간 이동 */
 }
 
 .textarea {
@@ -46,12 +75,11 @@
 */
 .sender {
   width: 360px;
-  height: 20px;
+  height: 50px;
   background-color: #FFFFFF;
-  overflow:auto;
   border-radius:10px;
   margin-bottom:5px;
-  padding: 10px 10px 10px 10px;
+  padding: 5px 10px;
 }
 
 .receiver {
@@ -124,6 +152,7 @@
     gap: 50px;
     padding: 20px; /* 패딩 추가 */
     flex: 1; /* 가용 공간을 차지하도록 설정 */
+    justify-content: center; /* 가로 방향 가운데 정렬 */
   }
   
   /* 메뉴와 사이드바 스타일 */

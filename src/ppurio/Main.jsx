@@ -21,13 +21,6 @@ function Main(props) {
                 <hr></hr>
             </header>
             <div className="menu">
-                <div className="sidebar">
-                    <h3>Menu</h3>
-                    <div className="menu-item" onClick={()=>alert('Home')}>Home</div>
-                    <div className="menu-item">About</div>
-                    <div className="menu-item">Services</div>
-                    <div className="menu-item">Chat Bot</div>
-                </div>
                 <div className="main">
                     <Input />
                     <PhoneSet />
