@@ -130,21 +130,25 @@ function AIMessageGenerator() {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/generate', {
+      const response = await fetch('http://127.0.0.1:5000/generate_message_api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, keywords }),
       });
 
       const data = await response.json();
-      if (response.ok) {
+      console.log('서버 응답:', data);
+
+      if (response.ok && Array.isArray(data.result_message)) {
         setGeneratedMessages(data.result_message);
       } else {
         alert('문자 생성 실패: ' + (data.error || '알 수 없는 오류'));
+        setGeneratedMessages([]);
       }
     } catch (error) {
       console.error('오류 발생:', error);
       alert('서버 요청 중 오류가 발생했습니다.');
+      setGeneratedMessages([]);
     }
   };
 
@@ -162,8 +166,7 @@ function AIMessageGenerator() {
   };
 
   const handleDeleteMessage = (index) => {
-    const updatedMessages = generatedMessages.filter((_, i) => i !== index);
-    setGeneratedMessages(updatedMessages);
+    setGeneratedMessages(generatedMessages.filter((_, i) => i !== index));
   };
 
   return (
@@ -203,7 +206,7 @@ function AIMessageGenerator() {
         </div>
 
         <div style={styles.rightPanel}>
-          {generatedMessages.length === 0 ? (
+          {generatedMessages?.length === 0 ? (
             <div style={styles.resultPlaceholder}>
               생성결과가 없습니다.<br />뿌리오 AI 기능을 이용해보세요!
             </div>
