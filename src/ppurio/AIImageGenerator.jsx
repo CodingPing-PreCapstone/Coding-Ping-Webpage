@@ -15,7 +15,7 @@ function AIImageGenerator() {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/generate', {
+      const response = await fetch('http://127.0.0.1:5000/generate_image_api/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
