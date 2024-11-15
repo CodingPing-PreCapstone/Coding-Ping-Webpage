@@ -52,7 +52,7 @@ function SavedImagesPopup({ images, onAddImage }) {
                 {images.length > 0 ? (
                     images.map((image, index) => (
                         <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                            <img src={image} alt={`Saved Image ${index}`} style={{ maxWidth: "100px", marginRight: "10px" }} />
+                            <img src={image} alt={`이미지 저장 ${index}`} style={{ maxWidth: "100px", marginRight: "10px" }} />
                             <button style={individualButton} onClick={() => onAddImage(image)}>Add</button>
                         </div>
                     ))
