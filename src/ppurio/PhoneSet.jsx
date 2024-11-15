@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
+import axios from 'axios';
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");
     const [sendertext, setSenderText] = useState("");
     const [addressBook, setAddressBook] = useState([]);
+    const [fromNumber, setfromNumber] = useState("");
+    const [submittedOriginalTexts, setSubmittedOriginalTexts] = useState([]);
     const addressBookPopupRef = useRef(null);
 
     const formatPhoneNumber = (phoneNumber) => {
@@ -37,10 +40,12 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
 
             if (type === "sender") {
                 setSender(formattedText);
+                setfromNumber(currentText);
                 setSenderText("");
             } else {
                 if (!submittedTexts.includes(formattedText)) {
                     setSubmittedTexts((prevTexts) => [...prevTexts, formattedText]);
+                    setSubmittedOriginalTexts((prevOriginals) => [...prevOriginals, currentText]);
                 }
                 setText("");
             }
@@ -126,22 +131,26 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
     }, [addressBook, addAllToSubmittedTexts, addToSubmittedTexts]); // 의존성 배열에 추가
 
-    const handleSendMessage = () => {
-        if (!sender || submittedTexts.length === 0 || !inputMessage || !generatedImage || !title) {
-            alert("메세지를 보낼 때 필요한 정보가 충분하지 않습니다.");
-            return;
+    const handleSendMessage = async () => {
+        try {
+            // 수신 번호들을 쉼표로 구분된 문자열로 변환
+            const toNumbers = submittedOriginalTexts;
+    
+            // API 요청 보내기 (response 변수 제거)
+            await axios.post(`${process.env.REACT_APP_API_URL}/send_message_api/send_message`, {
+                title,
+                fromNumber,
+                toNumbers,
+                inputMessage,
+                generatedImage,
+            });
+
+            alert(`Message Sent!`);
+
+        } catch (error) {
+            console.error("Error sending message: ", error);
+            alert("Failed to send Message");
         }
-
-        const receiverText = submittedTexts.join(", ");
-        const messageContent = `
-            제목: ${title}
-            발신 번호: ${sender}
-            수신 번호: ${receiverText}
-            메시지 내용: ${inputMessage}
-            생성된 이미지 URL: ${generatedImage}
-        `;
-
-        alert(messageContent);
     };
 
     return (
