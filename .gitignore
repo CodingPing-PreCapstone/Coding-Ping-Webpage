@@ -27,3 +27,4 @@ yarn-error.log*
 
 # 서버 파일 무시
 src/server/message_api.py
+
