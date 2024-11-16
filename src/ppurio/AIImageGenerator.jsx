@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function AIImageGenerator() {
+function AIImageGenerator({ setGeneratedImage }) {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [instruction, setInstruction] = useState('');
@@ -44,6 +44,16 @@ function AIImageGenerator() {
     } catch (error) {
       console.error('오류 발생:', error);
       alert('서버 요청 중 오류가 발생했습니다.');
+    }
+  };
+
+   // 생성된 이미지를 메인 페이지로 전송하는 함수
+   const handleUseImage = () => {
+    if (resultImage) {
+      setGeneratedImage(resultImage);
+      alert('이미지가 메인 페이지로 전송되었습니다!');
+    } else {
+      alert('생성된 이미지가 없습니다.');
     }
   };
 
@@ -243,12 +253,10 @@ function AIImageGenerator() {
 
         <div style={styles.rightPanel}>
           {resultImage && (
-            <img
-              id="resultImage"
-              src={resultImage}
-              alt="생성된 이미지가 여기에 표시됩니다."
-              style={styles.img}
-            />
+            <div>
+            <img src={resultImage} alt="생성된 이미지" />
+            <button onClick={handleUseImage}>이미지 사용</button>
+          </div>
           )}
         </div>
       </div>

@@ -121,7 +121,7 @@ const styles = {
   },
 };
 
-function AIMessageGenerator() {
+function AIMessageGenerator({ setInputMessage }) {
   const [message, setMessage] = useState('');
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -167,6 +167,12 @@ function AIMessageGenerator() {
 
   const handleDeleteMessage = (index) => {
     setGeneratedMessages(generatedMessages.filter((_, i) => i !== index));
+  };
+
+  // "메시지 사용" 버튼 클릭 시 메인 화면으로 메시지 전송
+  const handleUseMessage = (msg) => {
+    setInputMessage(msg);
+    alert("메시지가 메인 화면으로 전송되었습니다!");
   };
 
   return (
@@ -218,7 +224,7 @@ function AIMessageGenerator() {
                 <div style={styles.buttonGroup}>
                   <button onClick={() => handleDeleteMessage(index)} style={styles.messageButton}>삭제</button>
                   <button onClick={() => alert('메시지가 저장되었습니다!')} style={styles.messageButton}>내 문자함 저장</button>
-                  <button onClick={() => alert('이 메시지를 사용합니다!')} style={styles.messageButton}>메시지 사용</button>
+                  <button onClick={() => handleUseMessage(msg)}>메시지 사용</button>
                 </div>
               </div>
             ))
