@@ -130,7 +130,7 @@ function AIMessageGenerator() {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/generate_message_api/generate', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/generate_message_api/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, keywords }),

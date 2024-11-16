@@ -1,5 +1,3 @@
-#10월 29일 사진에서 키워드 수정할 수 있게 (생성된 이미지 + 생성된 이미지 위 입힌 텍스트 -> 총 2개)
-#10/29 수정
 from flask import Blueprint, request, jsonify, send_from_directory
 from PIL import Image, ImageDraw, ImageFont
 import openai
@@ -11,12 +9,13 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../.env'))
 # OpenAI API 키 설정
 openai.api_key = os.getenv("OPENAI_API_KEY")
+FLASK_API_URL = os.getenv("REACT_APP_API_URL", "http://localhost:5000")
 
 generate_image_api = Blueprint('generate_image_api', __name__)
 # 정적 파일, HTML 파일, 폰트 경로 설정
 STATIC_FOLDER = os.path.join(os.getcwd(), 'static')
 HTML_FOLDER = os.path.join(STATIC_FOLDER, 'html')
-FONTS_FOLDER = os.path.join(os.getcwd(), 'fonts')
+FONTS_FOLDER = os.path.abspath(os.path.join(os.getcwd(), '..', 'fonts'))
 FONT_PATH = os.path.join(FONTS_FOLDER, 'NanumBrush.ttf')
 
 # 정적 폴더가 없는 경우 생성
@@ -161,8 +160,8 @@ def generate_image():
         result_img_path = os.path.join(STATIC_FOLDER, 'result.png')
         img.save(result_img_path)
 
-        # 화면에는 result.png의 URL만 반환
-        return jsonify({'imageUrl': f'http://localhost:5000/static/result.png'}), 200
+        # EC2의 공인 IP를 사용한 이미지 URL 반환
+        return jsonify({'imageUrl': f'{FLASK_API_URL}/static/result.png'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
