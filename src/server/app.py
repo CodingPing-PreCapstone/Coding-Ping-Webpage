@@ -1,8 +1,8 @@
 from flask import Flask, request
 from flask_cors import CORS
-from generate_image import generate_image_api
-from generate_message import generate_message_api
-from message_api import send_message_api
+from .generate_image import generate_image_api
+from .generate_message import generate_message_api
+from .message_api import send_message_api
 
 app = Flask(__name__)
 CORS(app)

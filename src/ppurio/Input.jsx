@@ -5,17 +5,17 @@ import AIMessageGenerator from "./AIMessageGenerator";
 import SavedImagesPopup from "./SavedImagesPopup";
 import SavedMessagesPopup from "./SavedMessagesPopup";
 
-function Input({ 
-    inputMessage, 
-    setInputMessage, 
-    generatedImage, 
-    setGeneratedImage, 
-    savedMessages, 
-    setSavedMessages, 
-    savedImages, 
-    setSavedImages, 
-    title, 
-    setTitle // New props for the title
+function Input({
+    inputMessage,
+    setInputMessage,
+    generatedImage,
+    setGeneratedImage,
+    savedMessages,
+    setSavedMessages,
+    savedImages,
+    setSavedImages,
+    title,
+    setTitle,
 }) {
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
@@ -47,7 +47,7 @@ function Input({
                 const div = newWindow.document.createElement("div");
                 newWindow.document.body.appendChild(div);
                 const root = createRoot(div);
-                root.render(<AIMessageGenerator />);
+                root.render(<AIMessageGenerator setInputMessage={setInputMessage} />);
                 messagePopupRef.current = newWindow;
                 newWindow.onbeforeunload = () => {
                     messagePopupRef.current = null;
@@ -102,7 +102,7 @@ function Input({
                 cols={50}
                 rows={1}
                 value={title}
-                onChange={(e) => setTitle(e.target.value)} // Update title state
+                onChange={(e) => setTitle(e.target.value)}
             ></textarea>
             <br />
             <textarea
@@ -114,26 +114,60 @@ function Input({
                 onChange={(e) => setInputMessage(e.target.value)}
             ></textarea>
             <br />
-            <button type="button" className="gradient-button" onClick={handleOpenImagePopup}>{"AI 이미지 자동생성"}</button>
-            <button type="button" className="gradient-button" onClick={handleOpenMessagePopup}>{"AI 자동생성"}</button>
+            <button type="button" className="gradient-button" onClick={handleOpenImagePopup}>
+                {"AI 이미지 자동생성"}
+            </button>
+            <button type="button" className="gradient-button" onClick={handleOpenMessagePopup}>
+                {"AI 자동생성"}
+            </button>
             <br />
-            <button type="button" className="gradient-button" onClick={handleSaveMessage}>{"메세지 저장"}</button>
-            <button type="button" className="gradient-button" onClick={handleOpenSavedMessagesPopup}>{"메세지 불러오기"}</button>
+            <button type="button" className="gradient-button" onClick={handleSaveMessage}>
+                {"메세지 저장"}
+            </button>
+            <button type="button" className="gradient-button" onClick={handleOpenSavedMessagesPopup}>
+                {"메세지 불러오기"}
+            </button>
             <br />
             <br />
             <br />
             <br />
-            <div className="generated-image-area">
+            <div
+                className="generated-image-area"
+                style={{
+                    width: "100%",
+                    height: "200px",
+                    overflow: "hidden",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "12px",
+                    backgroundColor: "#f9f9f9",
+                }}
+            >
                 {generatedImage ? (
-                    <img src={generatedImage} alt="Generated AI" style={{ maxWidth: "100%" }} />
+                    <img
+                        src={generatedImage}
+                        alt="Generated AI"
+                        style={{
+                            maxWidth: "80%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                            borderRadius: "12px",
+                        }}
+                    />
                 ) : (
                     <div className="placeholder">
                         <div className="plus-icon">+</div>
                     </div>
                 )}
             </div>
-            <button type="button" className="gradient-button" onClick={handleSaveImage}>{"이미지 저장"}</button>
-            <button type="button" className="gradient-button" onClick={handleOpenSavedImagesPopup}>{"이미지 불러오기"}</button>
+            <button type="button" className="gradient-button" onClick={handleSaveImage}>
+                {"이미지 저장"}
+            </button>
+            <button type="button" className="gradient-button" onClick={handleOpenSavedImagesPopup}>
+                {"이미지 불러오기"}
+            </button>
         </div>
     );
 }
