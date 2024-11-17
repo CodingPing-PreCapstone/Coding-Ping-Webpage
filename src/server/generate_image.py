@@ -5,6 +5,7 @@ import os
 import requests
 from io import BytesIO
 from dotenv import load_dotenv
+import base64
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../.env'))
 # OpenAI API 키 설정
@@ -15,6 +16,7 @@ generate_image_api = Blueprint('generate_image_api', __name__)
 # 정적 파일, HTML 파일, 폰트 경로 설정
 STATIC_FOLDER = os.path.join(os.getcwd(), 'static')
 HTML_FOLDER = os.path.join(STATIC_FOLDER, 'html')
+REACT_FOLDER = os.path.join(STATIC_FOLDER, 'react')
 FONTS_FOLDER = os.path.abspath(os.path.join(os.getcwd(), '..', 'fonts'))
 FONT_PATH = os.path.join(FONTS_FOLDER, 'NanumBrush.ttf')
 
@@ -22,13 +24,8 @@ FONT_PATH = os.path.join(FONTS_FOLDER, 'NanumBrush.ttf')
 if not os.path.exists(STATIC_FOLDER):
     os.makedirs(STATIC_FOLDER)
 
-# 텍스트를 지정된 언어로 번역하는 함수
-def translate_text(text, target_language):
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[{"role": "user", "content": f"Translate '{text}' to {target_language}. Just print out the results."}]
-    )
-    return response.choices[0].message['content'].strip()
+if not os.path.exists(REACT_FOLDER):  # React 폴더가 없는 경우 경고 출력 11/17
+    print("⚠️ React build 폴더가 없습니다. React 빌드 파일을 static/react에 배치하세요.")
 
 # 메시지를 짧게 요약하는 함수
 def generate_short_message(message):
@@ -63,7 +60,6 @@ def calculate_text_position(image, position_hint, text, font):
 
 # 텍스트를 주어진 너비에 맞게 줄바꿈하는 함수
 def wrap_text(text, font, max_width):
-    """텍스트를 주어진 너비에 맞게 줄바꿈합니다."""
     lines = []
     words = text.split(' ')
     line = []
@@ -84,6 +80,21 @@ def wrap_text(text, font, max_width):
 
     return '\n'.join(lines)
 
+# 이미지 파일 크기를 조정하는 함수
+# 이미지 압축 및 저장 함수
+def save_image_with_compression(image, path, max_size):
+        quality = 95  # 초기 JPEG 품질 설정
+        while quality > 10:
+            with BytesIO() as buf:
+                image.save(buf, 'JPEG', quality=quality)
+                size = buf.tell()
+                if size <= max_size:
+                    with open(path, 'wb') as f:
+                        f.write(buf.getvalue())
+                    print(f"Saved '{path}' with size {size / 1024:.2f} KB (Quality: {quality})")
+                    break
+                quality -= 5
+
 @generate_image_api.route('/generate', methods=['POST'])
 def generate_image():
     try:
@@ -98,23 +109,23 @@ def generate_image():
         font_size = data.get('fontSize', 50)
         painting_style = data.get('painting_style', '선택 안함')
 
+       # 메시지 요약 생성
+        summarized_message = generate_short_message(message)
+        print("summarized_message: " + summarized_message + "\n")
+        result_message = summarized_message
+        print("result_message: " + result_message + "\n")
+
         # 폰트 파일 경로 설정
         font_path = os.path.join(FONTS_FOLDER, font_name)
 
-        # 텍스트 번역
-        translated_title = translate_text(title, "English")
-        translated_message = translate_text(message, "English")
-        translated_instruction = translate_text(instruction, "English")
-
         # 메시지 요약 생성
-        summarized_message = generate_short_message(translated_message)
-        result_message = translate_text(summarized_message, "Korean")
+        summarized_message = generate_short_message(message)
 
         # DALL·E에 이미지 생성을 요청하는 프롬프트 생성
         prompt = (
             f"Create an artistic image in the style of {painting_style}. "
-            f"The theme is: {translated_title}. "
-            f"Exclude all text, letters, and symbols. Follow these additional instructions: {translated_instruction}"
+            f"The theme is: {title}. "
+            f"Exclude all text, letters, and symbols. Follow these additional instructions: {instruction}"
         )
 
         # DALL·E API를 통해 이미지 생성
@@ -131,9 +142,10 @@ def generate_image():
         img = Image.open(BytesIO(image_response.content))
 
         # 기본 생성 이미지를 저장 (텍스트가 없는 원본 이미지)
-        original_img_path = os.path.join(STATIC_FOLDER, 'original.png')
-        img.save(original_img_path)
+        original_img_path = os.path.join(STATIC_FOLDER, 'original.jpg')
+        save_image_with_compression(img, original_img_path, 300 * 1024)  # 300KB 제한 적용
 
+    
         # 폰트를 불러옴 (기본 폰트로 대체 가능)
         try:
             font = ImageFont.truetype(font_path, font_size)
@@ -141,7 +153,7 @@ def generate_image():
             font = ImageFont.load_default()
 
         # 텍스트 줄바꿈 처리
-        wrapped_message = wrap_text(result_message, font, img.width - 20)
+        wrapped_message = wrap_text(summarized_message, font, img.width - 20)
 
         # 텍스트 위치 계산
         x, y = calculate_text_position(img, position, wrapped_message, font)
@@ -157,15 +169,63 @@ def generate_image():
         draw.text((x, y), wrapped_message, font=font, fill=text_color)
 
         # 텍스트가 추가된 이미지를 로컬에 저장 (최종 이미지)
-        result_img_path = os.path.join(STATIC_FOLDER, 'result.png')
-        img.save(result_img_path)
+        result_img_path = os.path.join(STATIC_FOLDER, 'result.jpg')
+        save_image_with_compression(img, result_img_path, 300 * 1024)  # 300KB 제한 적용
 
-        # EC2의 공인 IP를 사용한 이미지 URL 반환
-        return jsonify({'imageUrl': f'{FLASK_API_URL}/static/result.png'}), 200
+        # 화면에는 result.jpg의 URL만 반환
+        return jsonify({'imageUrl': f'{FLASK_API_URL}/static/result.jpg'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+# 이미지 폴더 내 저장 (실행 안됨. 추후 수정 필요)
+@generate_image_api.route('/upload', methods=['POST'])
+def upload_image():
+    try:
+        data = request.json
+        if not data:
+            print("No data received!")
+            return jsonify({"error": "No data received"}), 400
 
+        image_data = data.get('image')
+        if not image_data:
+            print("No image data in request!")
+            return jsonify({"error": "No image data"}), 400
+
+        print("Received Image Data:", image_data[:50])  # 데이터 URL 일부 출력
+
+        # 데이터 URL에서 이미지 데이터 추출
+        header, encoded = image_data.split(",", 1)
+        image_bytes = base64.b64decode(encoded)
+        print("Decoded Image Bytes Length:", len(image_bytes))  # 디코딩된 바이트 길이 출력
+
+        # 이미지 열기 및 복사
+        img_buf = BytesIO(image_bytes)
+        img = Image.open(img_buf).convert("RGB")  # 복사 및 RGB 변환
+        img_buf.close()  # BytesIO 객체를 명시적으로 닫기
+        img.load()  # 이미지 데이터를 메모리에 로드하여 BytesIO와의 의존성 제거
+        print("Image format:", img.format)
+
+        # 이미지 저장 경로
+        image_path = os.path.join(STATIC_FOLDER, 'image_edit.jpg')
+        print("Image will be saved to:", image_path)
+
+        # 이미지 압축 및 저장
+        save_image_with_compression(img, image_path, 300 * 1024)
+        print("Image saved successfully!")
+
+        return jsonify({"message": "Image saved successfully", "imagePath": "/static/image_edit.jpg"}), 200
+    except Exception as e:
+        print("Error occurred:", str(e))  # 에러 메시지 출력
+        return jsonify({"error": str(e)}), 500
+
+@generate_image_api.route('/static/react')
+def serve_react():
+    return send_from_directory(os.path.join(STATIC_FOLDER, 'react'), 'index.html')
+
+@generate_image_api.route('/static/react/<path:filename>')
+def serve_react_static(filename):
+    return send_from_directory(os.path.join(STATIC_FOLDER, 'react'), filename)
 
 # 정적 파일 제공
 @generate_image_api.route('/static/<path:filename>')
