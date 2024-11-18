@@ -9,6 +9,7 @@ function AIImageGenerator({ setGeneratedImage }) {
   const [borderColor, setBorderColor] = useState('#ffffff');
   const [position, setPosition] = useState('center');
   const [fontSize, setFontSize] = useState(30);
+  const [paintingStyle, setPaintingStyle] = useState('');  
   const [resultImage, setResultImage] = useState('');
 
   const handleSubmit = async (event) => {
@@ -29,6 +30,7 @@ function AIImageGenerator({ setGeneratedImage }) {
           borderColor,
           position,
           fontSize,
+          painting_style: paintingStyle, 
         }),
       });
 
@@ -194,6 +196,21 @@ function AIImageGenerator({ setGeneratedImage }) {
               placeholder="이미지 생성 부가 명령 입력"
               style={styles.textarea}
             />
+            <label htmlFor="paintingStyle">화풍 선택:</label>
+            <select
+              id="paintingStyle"
+              value={paintingStyle}
+              onChange={(e) => setPaintingStyle(e.target.value)}
+              style={styles.select}
+            >
+              <option value="">선택 안함</option>
+              <option value="Realism">리얼리즘</option>
+              <option value="Miniature Art">세밀화</option>
+              <option value="Pixel Art">픽셀 아트</option>
+              <option value="Sketch & Drawing">스케치 & 드로잉</option>
+              <option value="minimalism">미니멀리즘</option>
+              <option value="pop art">팝아트</option>
+            </select>
             <label htmlFor="font">폰트 선택:</label>
             <select
               id="font"
@@ -259,7 +276,7 @@ function AIImageGenerator({ setGeneratedImage }) {
             </button>
             <button
               type="button"
-              onClick={() => window.open(`${process.env.REACT_APP_API_URL}/static/react/index.html`, '_blank', 'noopener,noreferrer')}
+              onClick={() => window.open(`${process.env.REACT_APP_API_URL}/static/react/index.html`, '_blank','noopener,noreferrer, width=1500, height=1200, top=100, left=100')}
               style={styles.button}
             >
               생성된 이미지 편집
