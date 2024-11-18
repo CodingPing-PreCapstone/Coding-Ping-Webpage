@@ -20,6 +20,35 @@ function Input({
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
 
+    // 파일 시스템에서 이미지 선택 시 호출되는 함수 수정
+    const handleImageSelect = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+            // 서버로 이미지 업로드 요청
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/send_message_api/upload_image`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    const imageUrl = data.imageUrl; // 서버에서 반환된 이미지 URL
+                    setGeneratedImage(imageUrl);
+                    alert('이미지가 서버에 저장되었습니다.');
+                } else {
+                    alert('이미지 업로드 실패: ' + data.error);
+                }
+            } catch (error) {
+                console.error('이미지 업로드 오류:', error);
+                alert('이미지 업로드 중 오류가 발생했습니다.');
+            }
+        }
+    };
+
     const handleOpenImagePopup = () => {
         if (!imagePopupRef.current || imagePopupRef.current.closed) {
             const newWindow = window.open("", "", "width=1600,height=1000");
@@ -67,7 +96,7 @@ function Input({
     const handleSaveMessage = () => {
         if (inputMessage.trim()) {
             setSavedMessages((prevMessages) => [...prevMessages, inputMessage.trim()]);
-            setInputMessage("");
+            setInputMessage("");    
         }
     };
 
@@ -92,6 +121,10 @@ function Input({
             root.render(<SavedMessagesPopup messages={savedMessages} onAddMessage={setInputMessage} />);
         }
     };
+
+    const handleDeleteImage = () => {
+        setGeneratedImage(null);
+    }
 
     return (
         <div>
@@ -157,11 +190,21 @@ function Input({
                         }}
                     />
                 ) : (
-                    <div className="placeholder">
+                    <div className="placeholder" onClick={() => document.getElementById("fileInput").click()}>
                         <div className="plus-icon">+</div>
+                        <input
+                            id="fileInput"
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={handleImageSelect}
+                        />
                     </div>
                 )}
             </div>
+            <button type="button" className="gradient-button" onClick={handleDeleteImage}>
+                {"이미지 삭제"}
+            </button>
             <button type="button" className="gradient-button" onClick={handleSaveImage}>
                 {"이미지 저장"}
             </button>

@@ -47,8 +47,8 @@ function AIImageGenerator({ setGeneratedImage }) {
     }
   };
 
-   // 생성된 이미지를 메인 페이지로 전송하는 함수
-   const handleUseImage = () => {
+  // 생성된 이미지를 메인 페이지로 전송하는 함수
+  const handleUseImage = () => {
     if (resultImage) {
       setGeneratedImage(resultImage);
       alert('이미지가 메인 페이지로 전송되었습니다!');
@@ -94,6 +94,7 @@ function AIImageGenerator({ setGeneratedImage }) {
     },
     rightPanel: {
       width: '50%',
+      flexDirectioni: 'column',
       backgroundColor: '#f9f9f9',
       display: 'flex',
       justifyContent: 'center',
@@ -150,12 +151,20 @@ function AIImageGenerator({ setGeneratedImage }) {
       background: 'linear-gradient(135deg, #2575fc 0%, #6a11cb 100%)',
     },
     img: {
-      maxWidth: '100%',
-      maxHeight: '100%',
-      height: 'auto',
+      maxWidth: '80%',
+      maxHeight: '70%',
+      objectFit: 'contain',
       borderRadius: '12px',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
     },
+    imgContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%',
+    }
   };
 
   return (
@@ -248,15 +257,22 @@ function AIImageGenerator({ setGeneratedImage }) {
             <button type="submit" style={styles.button}>
               AI 이미지 생성
             </button>
+            <button
+              type="button"
+              onClick={() => window.open(`${process.env.REACT_APP_API_URL}/static/react/index.html`, '_blank', 'noopener,noreferrer')}
+              style={styles.button}
+            >
+              생성된 이미지 편집
+            </button>
           </form>
         </div>
 
         <div style={styles.rightPanel}>
           {resultImage && (
-            <div>
-            <img src={resultImage} alt="생성된 이미지" />
-            <button onClick={handleUseImage}>이미지 사용</button>
-          </div>
+            <div style={styles.imgContainer}>
+              <img src={resultImage} alt="생성된 이미지" style={styles.img} />
+              <button onClick={handleUseImage} style={styles.button}>이미지 사용</button>
+            </div>
           )}
         </div>
       </div>
