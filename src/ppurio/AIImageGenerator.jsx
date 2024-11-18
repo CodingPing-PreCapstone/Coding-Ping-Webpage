@@ -207,7 +207,7 @@ function AIImageGenerator({ setGeneratedImage }) {
               <option value="Realism">리얼리즘</option>
               <option value="Miniature Art">세밀화</option>
               <option value="Pixel Art">픽셀 아트</option>
-              <option value="Sketch & Drawing">스케치 & 드로잉</option>
+              <option value="Illustration">일러스트</option>
               <option value="minimalism">미니멀리즘</option>
               <option value="pop art">팝아트</option>
             </select>
