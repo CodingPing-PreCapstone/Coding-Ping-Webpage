@@ -259,7 +259,7 @@ function AIImageGenerator({ setGeneratedImage }) {
             </button>
             <button
               type="button"
-              onClick={() => window.open(`${process.env.REACT_APP_API_URL}/static/react`, '_blank')}
+              onClick={() => window.open(`${process.env.REACT_APP_API_URL}/static/react/index.html`, '_blank', 'noopener,noreferrer')}
               style={styles.button}
             >
               생성된 이미지 편집

@@ -219,13 +219,18 @@ def upload_image():
         print("Error occurred:", str(e))  # 에러 메시지 출력
         return jsonify({"error": str(e)}), 500
 
-@generate_image_api.route('/static/react')
-def serve_react():
-    return send_from_directory(os.path.join(STATIC_FOLDER, 'react'), 'index.html')
+# React 정적 파일 제공
+@generate_image_api.route('/static/react', defaults={'filename': 'index.html'}, methods=['GET'])
+@generate_image_api.route('/static/react/', defaults={'filename': 'index.html'}, methods=['GET'])
+def serve_react_index(filename):
+    directory = os.path.join(STATIC_FOLDER, 'react')
+    return send_from_directory(directory, filename)
 
-@generate_image_api.route('/static/react/<path:filename>')
-def serve_react_static(filename):
-    return send_from_directory(os.path.join(STATIC_FOLDER, 'react'), filename)
+# React 빌드 파일 내부의 정적 파일 제공 (static/js, static/css)
+@generate_image_api.route('/static/react/static/<path:filename>', methods=['GET'])
+def serve_react_build_static(filename):
+    directory = os.path.join(STATIC_FOLDER, 'react', 'static')
+    return send_from_directory(directory, filename)
 
 # 정적 파일 제공
 @generate_image_api.route('/static/<path:filename>')
