@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
 import axios from 'axios';
+import RecentAddress from "./RecentAddress";    
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");

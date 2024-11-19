@@ -224,7 +224,7 @@ function AIMessageGenerator({ setInputMessage }) {
                 <div style={styles.buttonGroup}>
                   <button onClick={() => handleDeleteMessage(index)} style={styles.messageButton}>삭제</button>
                   <button onClick={() => alert('메시지가 저장되었습니다!')} style={styles.messageButton}>내 문자함 저장</button>
-                  <button onClick={() => handleUseMessage(msg)}>메시지 사용</button>
+                  <button onClick={() => handleUseMessage(msg)} style={styles.messageButton}>메시지 사용</button>
                 </div>
               </div>
             ))
