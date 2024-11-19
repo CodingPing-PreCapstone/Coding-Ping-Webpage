@@ -8,17 +8,17 @@ import FirestoreCollection from './FirestoreCollection';
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 function Input({
-    inputMessage,
-    setInputMessage,
-    generatedImage,
-    setGeneratedImage,
-    savedMessages,
-    setSavedMessages,
-    savedImages,
-    setSavedImages,
-    title,
-    setTitle,
-}) {
+                   inputMessage,
+                   setInputMessage,
+                   generatedImage,
+                   setGeneratedImage,
+                   savedMessages,
+                   setSavedMessages,
+                   savedImages,
+                   setSavedImages,
+                   title,
+                   setTitle,
+               }) {
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
 
@@ -30,7 +30,7 @@ function Input({
             formData.append('file', file);
 
             try {
-            // 서버로 이미지 업로드 요청
+                // 서버로 이미지 업로드 요청
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/send_message_api/upload_image`, {
                     method: 'POST',
                     body: formData,
@@ -94,7 +94,7 @@ function Input({
             try {
                 const storage = getStorage();
                 const imageName = `image_${Date.now()}.jpg`; // 고유한 파일 이름 생성
-                const storageRef = ref(storage, `images/${imageName}`);
+                const storageRef = ref(storage, `AI_Image/${imageName}`);
 
                 // Fetch 이미지를 Blob으로 변환
                 const response = await fetch(generatedImage);
@@ -118,19 +118,48 @@ function Input({
     const handleSaveMessage = () => {
         if (inputMessage.trim()) {
             setSavedMessages((prevMessages) => [...prevMessages, inputMessage.trim()]);
-            setInputMessage("");    
+            setInputMessage("");
         }
     };
 
     const handleOpenSavedImagesPopup = () => {
-        const newWindow = window.open("", "", "width=1600,height=1000");
-        if (newWindow) {
-            newWindow.document.title = "저장된 이미지";
-            const div = newWindow.document.createElement("divㅌ");
-            newWindow.document.body.appendChild(div);
-            const root = createRoot(div);
-            root.render(<SavedImagesPopup images={savedImages} onAddImage={setGeneratedImage} />);
-        }
+        const handleOpenSavedImagesPopup = async () => {
+            const newWindow = window.open("", "", "width=1600,height=1000");
+            if (newWindow) {
+                newWindow.document.title = "저장된 이미지";
+
+                // 새 div 생성 및 추가
+                const div = newWindow.document.createElement("div");
+                newWindow.document.body.appendChild(div);
+
+                // Firebase Storage의 저장된 이미지 다운로드
+                try {
+                    const storage = getStorage();
+                    const images = []; // 다운로드된 이미지 URL 목록
+
+                    for (let imageName of savedImages) {
+                        const storageRef = ref(storage, `/AI_Image/${imageName}`);
+                        const url = await getDownloadURL(storageRef);
+                        images.push(url); // URL 추가
+                    }
+
+                    // React DOM 루트 생성 및 렌더링
+                    const root = createRoot(div);
+                    root.render(
+                        <SavedImagesPopup
+                            images={images}
+                            onAddImage={(selectedImage) => {
+                                setGeneratedImage(selectedImage); // 선택한 이미지를 설정
+                                newWindow.close(); // 팝업 닫기
+                            }}
+                        />
+                    );
+                } catch (error) {
+                    console.error("Error downloading images:", error);
+                    newWindow.document.body.innerHTML = "<p>이미지를 불러오는데 실패했습니다.</p>";
+                }
+            }
+        };
     };
 
     const handleOpenSavedMessagesPopup = () => {
