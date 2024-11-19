@@ -12,7 +12,7 @@ const container = {
 
 const addressBookArea = {
     width: "360px",
-    height: "500px",
+    minHeight: "500px",
     backgroundColor: "#FFFFFF",
     display: "flex",
     flexDirection: "column",
