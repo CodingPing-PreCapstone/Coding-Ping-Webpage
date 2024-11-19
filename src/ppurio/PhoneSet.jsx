@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
 import axios from 'axios';
+import FirestoreCollection from "./FirestoreCollection"; // FirestoreCollection.js 파일 import
+
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");
@@ -10,9 +12,9 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     const [addressBook, setAddressBook] = useState([]);
     const [fromNumber, setfromNumber] = useState("");
     const [submittedOriginalTexts, setSubmittedOriginalTexts] = useState([]);
-    const [recentNumbers, setRecentNumbers] = useState([]);
-    const recentAddressPopupRef = useRef(null);
     const addressBookPopupRef = useRef(null);
+
+    let latestNumbers = [];
 
     const formatPhoneNumber = (phoneNumber) => {
         if (phoneNumber.length === 11) {
@@ -20,6 +22,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
         return phoneNumber;
     };
+
+
 
     const activeEnter = (e, type) => {
         if (e.key === "Enter") {
@@ -56,17 +60,33 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
 
     const divClear = () => {
         setSubmittedTexts([]); // 수신 번호 배열 초기화
+        latestNumbers = [];
     };
 
-    const saveAddressBook = () => {
+    const saveAddressBook = async () => {
         const uniqueNumbers = submittedTexts.filter((number) => !addressBook.includes(number));
         if (uniqueNumbers.length > 0) {
             setAddressBook((prevAddressBook) => [...prevAddressBook, ...uniqueNumbers]);
-            alert("주소록 저장 완료");
+
+            // Firestore에 저장
+            try {
+                const firestoreCollection = new FirestoreCollection("contact"); // "contact"는 Firestore 컬렉션 이름
+                const user = "defaultUser"; // 사용자 식별자
+                const updates = { number: uniqueNumbers };
+
+                // Firestore에 업데이트
+                await firestoreCollection.update(user, updates);
+
+                alert("주소록 저장 완료");
+            } catch (error) {
+                console.error("Error saving to Firestore:", error);
+                alert("주소록 저장 중 오류가 발생했습니다.");
+            }
         } else {
             alert("새로운 번호가 없습니다.");
         }
     };
+
 
     const addAllToSubmittedTexts = useCallback((allContacts) => {
         setSubmittedTexts((prevTexts) => {
@@ -117,36 +137,6 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
     };
 
-    const handleOpenRecentAddressPopup = () => {
-        if (!recentAddressPopupRef.current || recentAddressPopupRef.current.closed) {
-            const newWindow = window.open("", "", "width=600,height=600");
-
-            if (newWindow) {
-                newWindow.document.title = "최근 전송 팝업 창";
-                const div = newWindow.document.createElement("div");
-                newWindow.document.body.appendChild(div);
-
-                const root = createRoot(div);
-                root.render(
-                    <RecentAddress
-                        recentNumbers={recentNumbers}
-                        onClose={() => newWindow.close()}
-                        addAllToSubmittedTexts={addAllToSubmittedTexts}
-                        addToSubmittedTexts={addToSubmittedTexts}
-                    />
-                );
-
-                recentAddressPopupRef.current = newWindow;
-
-                newWindow.onbeforeunload = () => {
-                    recentAddressPopupRef.current = null;
-                };
-            }
-        } else {
-            recentAddressPopupRef.current.focus();
-        }
-    };
-
     useEffect(() => {
         if (addressBookPopupRef.current && !addressBookPopupRef.current.closed) {
             const div = addressBookPopupRef.current.document.body.querySelector("div");
@@ -167,7 +157,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         try {
             // 수신 번호들을 쉼표로 구분된 문자열로 변환
             const toNumbers = submittedOriginalTexts;
-    
+
             // API 요청 보내기 (response 변수 제거)
             await axios.post(`${process.env.REACT_APP_API_URL}/send_message_api/send_message`, {
                 title,
@@ -177,8 +167,26 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 generatedImage,
             });
 
-            setRecentNumbers((prev) => [...new Set([...prev, ...submittedTexts])]);
-            alert(`Message Sent!`);
+            try {
+                const firestoreCollection = new FirestoreCollection("latest_contact"); // "latest_contact" 컬렉션
+
+                // 배열 길이가 10개를 초과하지 않도록 유지
+                const newNumbers = toNumbers.filter((num) => !latestNumbers.includes(num));
+                latestNumbers = [...latestNumbers, ...newNumbers];
+                if (latestNumbers.length > 10) {
+                    latestNumbers = latestNumbers.slice(latestNumbers.length - 10); // 최신 10개만 유지
+                }
+
+                // Firestore에 업데이트
+                updates.latest_number = latestNumbers;
+                await firestoreCollection.update(user, updates);
+
+                alert(`Message Sent!`);
+
+            } catch (error) {
+                console.error("Error updating latest contact in Firestore:", error);
+                alert("Failed to update latest numbers in Firestore.");
+            }
 
         } catch (error) {
             console.error("Error sending message: ", error);
@@ -203,7 +211,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
             <button type="button" className="gradient-button" onClick={handleOpenAddressBookPopup}>
                 {"주소록"}
             </button>
-            <button type="button" className="gradient-button" onClick={handleOpenRecentAddressPopup}>
+            <button type="button" className="gradient-button" onClick={handleOpenAddressBookPopup}>
                 {"최근 전송"}
             </button>
             <h3>{"수신번호 입력"}</h3>

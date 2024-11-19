@@ -4,6 +4,8 @@ import AIImageGenerator from "./AIImageGenerator";
 import AIMessageGenerator from "./AIMessageGenerator";
 import SavedImagesPopup from "./SavedImagesPopup";
 import SavedMessagesPopup from "./SavedMessagesPopup";
+import FirestoreCollection from './FirestoreCollection';
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 function Input({
     inputMessage,
@@ -87,9 +89,29 @@ function Input({
         }
     };
 
-    const handleSaveImage = () => {
+    const handleSaveImage = async () => {
         if (generatedImage) {
-            setSavedImages((prevImages) => [...prevImages, generatedImage]);
+            try {
+                const storage = getStorage();
+                const imageName = `image_${Date.now()}.jpg`; // 고유한 파일 이름 생성
+                const storageRef = ref(storage, `images/${imageName}`);
+
+                // Fetch 이미지를 Blob으로 변환
+                const response = await fetch(generatedImage);
+                const blob = await response.blob();
+
+                // Firebase Storage에 업로드
+                await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
+
+                // 업로드된 이미지 URL을 저장
+                setSavedImages((prevImages) => [...prevImages, generatedImage]);
+                alert("이미지가 성공적으로 업로드되었습니다!");
+            } catch (error) {
+                console.error("이미지 업로드 실패:", error);
+                alert("이미지 업로드에 실패했습니다.");
+            }
+        } else {
+            alert("업로드할 이미지가 없습니다.");
         }
     };
 
@@ -104,7 +126,7 @@ function Input({
         const newWindow = window.open("", "", "width=1600,height=1000");
         if (newWindow) {
             newWindow.document.title = "저장된 이미지";
-            const div = newWindow.document.createElement("div");
+            const div = newWindow.document.createElement("divㅌ");
             newWindow.document.body.appendChild(div);
             const root = createRoot(div);
             root.render(<SavedImagesPopup images={savedImages} onAddImage={setGeneratedImage} />);
