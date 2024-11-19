@@ -22,6 +22,10 @@ function Input({
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
 
+    let latest_Images_url = [];
+    const firestoreCollection = new FirestoreCollection("lastestImage"); // "contact"는 Firestore 컬렉션 이름
+
+
     // 파일 시스템에서 이미지 선택 시 호출되는 함수 수정
     const handleImageSelect = async (event) => {
         const file = event.target.files[0];
@@ -102,10 +106,22 @@ function Input({
 
                 // Firebase Storage에 업로드
                 await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
+                FirestoreCollection.
 
                 // 업로드된 이미지 URL을 저장
                 setSavedImages((prevImages) => [...prevImages, generatedImage]);
-                alert("이미지가 성공적으로 업로드되었습니다!");
+                alert("이미지 이름 : ${imageName} 성공적으로 업로드되었습니다!");
+                latest_Images_url.push(`AI_Image/${imageName}`);
+                if (latest_Images_url.length > 10) { // 배열 길이가 10 초과인 경우
+                    latest_Images_url.shift(); // 첫 번째 원소 삭제
+                }
+
+                firestoreCollection.update("default user",
+
+                updates.latest_number = latestNumbers,
+                await firestoreCollection.update(user, updates);
+                )
+
             } catch (error) {
                 console.error("이미지 업로드 실패:", error);
                 alert("이미지 업로드에 실패했습니다.");
