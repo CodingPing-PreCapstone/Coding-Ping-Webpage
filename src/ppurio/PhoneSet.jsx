@@ -10,6 +10,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     const [addressBook, setAddressBook] = useState([]);
     const [fromNumber, setfromNumber] = useState("");
     const [submittedOriginalTexts, setSubmittedOriginalTexts] = useState([]);
+    const [recentNumbers, setRecentNumbers] = useState([]);
+    const recentAddressPopupRef = useRef(null);
     const addressBookPopupRef = useRef(null);
 
     const formatPhoneNumber = (phoneNumber) => {
@@ -115,6 +117,36 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
     };
 
+    const handleOpenRecentAddressPopup = () => {
+        if (!recentAddressPopupRef.current || recentAddressPopupRef.current.closed) {
+            const newWindow = window.open("", "", "width=600,height=600");
+
+            if (newWindow) {
+                newWindow.document.title = "최근 전송 팝업 창";
+                const div = newWindow.document.createElement("div");
+                newWindow.document.body.appendChild(div);
+
+                const root = createRoot(div);
+                root.render(
+                    <RecentAddress
+                        recentNumbers={recentNumbers}
+                        onClose={() => newWindow.close()}
+                        addAllToSubmittedTexts={addAllToSubmittedTexts}
+                        addToSubmittedTexts={addToSubmittedTexts}
+                    />
+                );
+
+                recentAddressPopupRef.current = newWindow;
+
+                newWindow.onbeforeunload = () => {
+                    recentAddressPopupRef.current = null;
+                };
+            }
+        } else {
+            recentAddressPopupRef.current.focus();
+        }
+    };
+
     useEffect(() => {
         if (addressBookPopupRef.current && !addressBookPopupRef.current.closed) {
             const div = addressBookPopupRef.current.document.body.querySelector("div");
@@ -145,6 +177,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 generatedImage,
             });
 
+            setRecentNumbers((prev) => [...new Set([...prev, ...submittedTexts])]);
             alert(`Message Sent!`);
 
         } catch (error) {
@@ -170,7 +203,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
             <button type="button" className="gradient-button" onClick={handleOpenAddressBookPopup}>
                 {"주소록"}
             </button>
-            <button type="button" className="gradient-button" onClick={handleOpenAddressBookPopup}>
+            <button type="button" className="gradient-button" onClick={handleOpenRecentAddressPopup}>
                 {"최근 전송"}
             </button>
             <h3>{"수신번호 입력"}</h3>

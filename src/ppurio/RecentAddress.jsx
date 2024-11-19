@@ -44,22 +44,29 @@ const individualButton = {
     marginLeft: "10px",
 };
 
-function AddressBook({ addressBook, setAddressBook, onClose, addAllToSubmittedTexts, addToSubmittedTexts }) {
+function RecentAddress({ recentNumbers, onClose, addToSubmittedTexts, addAllToSubmittedTexts }) {
     const handleAddContact = (contact) => {
         addToSubmittedTexts(contact); // 중복 여부는 addToSubmittedTexts에서 처리
     };
 
-    const handleDeleteAllContacts = () => {
-        setAddressBook([]); // 주소록 전체 삭제
+    const handleClearRecentNumbers = () => {
+        if (recentNumbers.length === 0) {
+            alert("최근 전송 목록이 비어 있습니다.");
+            return;
+        }
+        const confirmClear = window.confirm("최근 전송 목록을 삭제하시겠습니까?");
+        if (confirmClear) {
+            addAllToSubmittedTexts([]); // Clear all recent numbers
+        }
     };
 
     return (
         <div style={container}>
             <div style={addressBookArea}>
-                <h3>{"주소록"}</h3>
-                <div className="address-book">
-                    {addressBook.length > 0 ? (
-                        addressBook.map((contact, index) => (
+                <h3>{"최근 전송"}</h3>
+                <div className="recent-numbers">
+                    {recentNumbers.length > 0 ? (
+                        recentNumbers.map((contact, index) => (
                             <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
                                 <p style={{ margin: 0 }}>{contact}</p>
                                 <button style={individualButton} onClick={() => handleAddContact(contact)}>
@@ -68,22 +75,21 @@ function AddressBook({ addressBook, setAddressBook, onClose, addAllToSubmittedTe
                             </div>
                         ))
                     ) : (
-                        <p>{"주소록이 비어 있습니다."}</p>
+                        <p>{"최근 전송된 번호가 없습니다."}</p>
                     )}
                 </div>
-                <button style={gradientButton} onClick={() => addAllToSubmittedTexts(addressBook)}>Add All</button>
-                <button
-                    style={gradientButton}
-                    onClick={() => {
-                        handleDeleteAllContacts();
-                    }}
-                >
-                    Delete All
+                <button style={gradientButton} onClick={() => addAllToSubmittedTexts(recentNumbers)}>
+                    Add All
                 </button>
-                <button style={gradientButton} onClick={onClose}>Close</button>
+                <button style={gradientButton} onClick={handleClearRecentNumbers}>
+                    Clear All
+                </button>
+                <button style={gradientButton} onClick={onClose}>
+                    Close
+                </button>
             </div>
         </div>
     );
 }
 
-export default AddressBook;
+export default RecentAddress;
