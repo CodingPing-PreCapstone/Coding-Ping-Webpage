@@ -22,7 +22,7 @@ function Input({
     const imagePopupRef = useRef(null);
     const messagePopupRef = useRef(null);
 
-    let latest_Images_url = [];
+    const latest_Images_url = [];
     const firestoreCollection = new FirestoreCollection("lastestImage"); // "contact"는 Firestore 컬렉션 이름
 
 
@@ -105,23 +105,31 @@ function Input({
                 const blob = await response.blob();
 
                 // Firebase Storage에 업로드
-                await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
-                FirestoreCollection.
+                const uploadResult = await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
 
-                // 업로드된 이미지 URL을 저장
-                setSavedImages((prevImages) => [...prevImages, generatedImage]);
-                alert("이미지 이름 : ${imageName} 성공적으로 업로드되었습니다!");
-                latest_Images_url.push(`AI_Image/${imageName}`);
-                if (latest_Images_url.length > 10) { // 배열 길이가 10 초과인 경우
-                    latest_Images_url.shift(); // 첫 번째 원소 삭제
+                if (uploadResult) { // 업로드 성공 시 후속 작업 진행
+                    // 업로드된 이미지 URL을 저장
+                    setSavedImages((prevImages) => [...prevImages, generatedImage]);
+                    alert(`이미지 이름: ${imageName} 성공적으로 업로드되었습니다!`);
+
+                    latest_Images_url.push(`AI_Image/${imageName}`);
+                    if (latest_Images_url.length > 10) { // 배열 길이가 10 초과인 경우
+                        latest_Images_url.shift(); // 첫 번째 원소 삭제
+                    }
+
+                    // imagePathArray 필드에 latest_Images_url 배열 저장 후 업데이트
+                    const updates_lastestImage = { imagePathArray: latest_Images_url };
+                    try {
+                        const updateResult = await firestoreCollection.update(user, updates_lastestImage);
+                        if (updateResult) {
+                            console.log("Firestore 업데이트 성공:", updateResult);
+                            alert("Firestore에 업데이트가 성공적으로 완료되었습니다.");
+                        }
+                    } catch (updateError) {
+                        console.error("Firestore 업데이트 실패:", updateError);
+                        alert("Firestore 업데이트에 실패했습니다.");
+                    }
                 }
-
-                firestoreCollection.update("default user",
-
-                updates.latest_number = latestNumbers,
-                await firestoreCollection.update(user, updates);
-                )
-
             } catch (error) {
                 console.error("이미지 업로드 실패:", error);
                 alert("이미지 업로드에 실패했습니다.");
@@ -130,6 +138,7 @@ function Input({
             alert("업로드할 이미지가 없습니다.");
         }
     };
+
 
     const handleSaveMessage = () => {
         if (inputMessage.trim()) {
