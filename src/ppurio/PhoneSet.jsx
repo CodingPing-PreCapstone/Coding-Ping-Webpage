@@ -4,7 +4,7 @@ import "./ppurio.css";
 import AddressBook from "./AddressBook";
 import axios from 'axios';
 import FirestoreCollection from "./FirestoreCollection"; // FirestoreCollection.js 파일 import
-
+import RecentAddress from "./RecentAddress";    
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");

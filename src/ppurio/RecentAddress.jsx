@@ -12,7 +12,7 @@ const container = {
 
 const addressBookArea = {
     width: "360px",
-    height: "500px",
+    minHeight: "500px",
     backgroundColor: "#FFFFFF",
     display: "flex",
     flexDirection: "column",
@@ -82,7 +82,7 @@ function RecentAddress({ recentNumbers, onClose, addToSubmittedTexts, addAllToSu
                     Add All
                 </button>
                 <button style={gradientButton} onClick={handleClearRecentNumbers}>
-                    Clear All
+                    Delete All
                 </button>
                 <button style={gradientButton} onClick={onClose}>
                     Close

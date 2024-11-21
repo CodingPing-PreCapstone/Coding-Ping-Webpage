@@ -42,8 +42,8 @@ function Input({
                 const data = await response.json();
 
                 if (response.ok) {
-                    const imageUrl = data.imageUrl; // 서버에서 반환된 이미지 URL
-                    setGeneratedImage(imageUrl);
+                    const uniqueUrl = `${data.imageUrl}?t=${new Date().getTime()}`;
+                    setGeneratedImage(uniqueUrl);
                     alert('이미지가 서버에 저장되었습니다.');
                 } else {
                     alert('이미지 업로드 실패: ' + data.error);
