@@ -119,6 +119,7 @@ function Input({
 
                     // imagePathArray 필드에 latest_Images_url 배열 저장 후 업데이트
                     const updates_lastestImage = { imagePathArray: latest_Images_url };
+                    const user = "defaultUser"
                     try {
                         const updateResult = await firestoreCollection.update(user, updates_lastestImage);
                         if (updateResult) {
@@ -147,45 +148,53 @@ function Input({
         }
     };
 
-    const handleOpenSavedImagesPopup = () => {
-        const handleOpenSavedImagesPopup = async () => {
-            const newWindow = window.open("", "", "width=1600,height=1000");
-            if (newWindow) {
-                newWindow.document.title = "저장된 이미지";
+    const handleOpenSavedImagesPopup = async () => {
+        const newWindow = window.open("", "", "width=1600,height=1000");
+        if (newWindow) {
+            newWindow.document.title = "저장된 이미지";
 
-                // 새 div 생성 및 추가
-                const div = newWindow.document.createElement("div");
-                newWindow.document.body.appendChild(div);
+            // 새 div 생성 및 추가
+            const div = newWindow.document.createElement("div");
+            newWindow.document.body.appendChild(div);
 
-                // Firebase Storage의 저장된 이미지 다운로드
-                try {
-                    const storage = getStorage();
-                    const images = []; // 다운로드된 이미지 URL 목록
+            // FirestoreCollection 객체 생성
+            const firestoreCollection = new FirestoreCollection(); // FirestoreCollection 클래스 인스턴스 생성
+            const user = "defaultUser"; // 사용자 지정
 
-                    for (let imageName of savedImages) {
-                        const storageRef = ref(storage, `/AI_Image/${imageName}`);
-                        const url = await getDownloadURL(storageRef);
-                        images.push(url); // URL 추가
+            try {
+                // Firestore에서 user 필드가 "defaultUser"인 문서의 imagePathArray 가져오기
+                const documents = await firestoreCollection.read(user);
+
+                const images = []; // 다운로드된 이미지 URL 목록
+                for (const doc of documents) {
+                    const imagePathArray = doc.imagePathArray || [];
+                    for (let imagePath of imagePathArray) {
+                        if (imagePath) { // 빈 문자열 검사
+                            const storageRef = ref(getStorage(), imagePath);
+                            const url = await getDownloadURL(storageRef);
+                            images.push(url); // URL 추가
+                        }
                     }
-
-                    // React DOM 루트 생성 및 렌더링
-                    const root = createRoot(div);
-                    root.render(
-                        <SavedImagesPopup
-                            images={images}
-                            onAddImage={(selectedImage) => {
-                                setGeneratedImage(selectedImage); // 선택한 이미지를 설정
-                                newWindow.close(); // 팝업 닫기
-                            }}
-                        />
-                    );
-                } catch (error) {
-                    console.error("Error downloading images:", error);
-                    newWindow.document.body.innerHTML = "<p>이미지를 불러오는데 실패했습니다.</p>";
                 }
+
+                // React DOM 루트 생성 및 렌더링
+                const root = createRoot(div);
+                root.render(
+                    <SavedImagesPopup
+                        images={images}
+                        onAddImage={(selectedImage) => {
+                            setGeneratedImage(selectedImage); // 선택한 이미지를 설정
+                            newWindow.close(); // 팝업 닫기
+                        }}
+                    />
+                );
+            } catch (error) {
+                console.error("Error downloading images:", error);
+                newWindow.document.body.innerHTML = "<p>이미지를 불러오는데 실패했습니다.</p>";
             }
-        };
+        }
     };
+
 
     const handleOpenSavedMessagesPopup = () => {
         const newWindow = window.open("", "", "width=1600,height=1000");
