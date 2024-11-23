@@ -27,13 +27,22 @@ if not os.path.exists(STATIC_FOLDER):
 if not os.path.exists(REACT_FOLDER):  # React 폴더가 없는 경우 경고 출력 11/17
     print("⚠️ React build 폴더가 없습니다. React 빌드 파일을 static/react에 배치하세요.")
 
-# 메시지를 짧게 요약하는 함수
+# # 메시지를 짧게 요약하는 함수
+# def generate_short_message(message):
+#     response = openai.ChatCompletion.create(
+#         model="gpt-4-turbo",
+#         messages=[{"role": "user", "content": f"{message}. within 20 letters"}]
+#     )
+#     return response.choices[0].message['content'].strip()
 def generate_short_message(message):
     response = openai.ChatCompletion.create(
         model="gpt-4-turbo",
-        messages=[{"role": "user", "content": f"{message}. within 20 letters"}]
+        # 프롬프트 수정 11/20 종종 영어로 출력되어 in korean 추가
+        messages=[{"role": "user", "content": f"{message}. within 20 letters in korean"}]
     )
-    return response.choices[0].message['content'].strip()
+    # 결과에서 큰따옴표 제거
+    result = response.choices[0].message['content'].strip()
+    return result.replace('"', '')  # 큰따옴표를 제거 11/20 수정
 
 # 텍스트 위치를 계산하는 함수
 def calculate_text_position(image, position_hint, text, font):
@@ -118,8 +127,8 @@ def generate_image():
         # 폰트 파일 경로 설정
         font_path = os.path.join(FONTS_FOLDER, font_name)
 
-        # 메시지 요약 생성
-        summarized_message = generate_short_message(message)
+        # # 메시지 요약 생성 11/20 수정 -> 이중으로 요약되어 영어로 출력되는 문제있음
+        # summarized_message = generate_short_message(message)
 
         # DALL·E에 이미지 생성을 요청하는 프롬프트 생성
         prompt = (

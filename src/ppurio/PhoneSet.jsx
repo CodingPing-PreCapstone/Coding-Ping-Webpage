@@ -3,8 +3,11 @@ import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
 import axios from 'axios';
+
 import FirestoreCollection from "./FirestoreCollection";
 import RecentAddress from "./RecentAddress";
+import RecentAddress from "./RecentAddress";    
+
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");
@@ -12,6 +15,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     const [addressBook, setAddressBook] = useState([]);
     const [fromNumber, setfromNumber] = useState("");
     const [submittedOriginalTexts, setSubmittedOriginalTexts] = useState([]);
+    const [recentNumbers, setRecentNumbers] = useState([]);
+
     const recentAddressPopupRef = useRef(null);
     const addressBookPopupRef = useRef(null);
 
@@ -181,6 +186,36 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
     };
 
+    const handleOpenRecentAddressPopup = () => {
+        if (!recentAddressPopupRef.current || recentAddressPopupRef.current.closed) {
+            const newWindow = window.open("", "", "width=600,height=600");
+
+            if (newWindow) {
+                newWindow.document.title = "최근 전송 팝업 창";
+                const div = newWindow.document.createElement("div");
+                newWindow.document.body.appendChild(div);
+
+                const root = createRoot(div);
+                root.render(
+                    <RecentAddress
+                        recentNumbers={recentNumbers}
+                        onClose={() => newWindow.close()}
+                        addAllToSubmittedTexts={addAllToSubmittedTexts}
+                        addToSubmittedTexts={addToSubmittedTexts}
+                    />
+                );
+
+                recentAddressPopupRef.current = newWindow;
+
+                newWindow.onbeforeunload = () => {
+                    recentAddressPopupRef.current = null;
+                };
+            }
+        } else {
+            recentAddressPopupRef.current.focus();
+        }
+    };
+
     useEffect(() => {
         if (addressBookPopupRef.current && !addressBookPopupRef.current.closed) {
             const div = addressBookPopupRef.current.document.body.querySelector("div");
@@ -209,6 +244,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 generatedImage,
             });
 
+
             try {
                 const firestoreCollection = new FirestoreCollection("latest_contact");
                 const documents = await firestoreCollection.read(user);
@@ -225,6 +261,10 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 if (latestNumbers.length > 10) {
                     latestNumbers = latestNumbers.slice(latestNumbers.length - 10);
                 }
+
+            setRecentNumbers((prev) => [...new Set([...prev, ...submittedTexts])]);
+            alert(`Message Sent!`);
+
 
                 await firestoreCollection.update(user, { latest_number: latestNumbers });
                 alert("Message Sent and Firestore latest_number updated!");
