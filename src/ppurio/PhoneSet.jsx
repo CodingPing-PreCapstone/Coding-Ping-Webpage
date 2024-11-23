@@ -3,7 +3,11 @@ import { createRoot } from "react-dom/client";
 import "./ppurio.css";
 import AddressBook from "./AddressBook";
 import axios from 'axios';
+
+import FirestoreCollection from "./FirestoreCollection";
+import RecentAddress from "./RecentAddress";
 import RecentAddress from "./RecentAddress";    
+
 
 function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTexts, sender, setSender, title }) {
     const [text, setText] = useState("");
@@ -12,6 +16,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     const [fromNumber, setfromNumber] = useState("");
     const [submittedOriginalTexts, setSubmittedOriginalTexts] = useState([]);
     const [recentNumbers, setRecentNumbers] = useState([]);
+
     const recentAddressPopupRef = useRef(null);
     const addressBookPopupRef = useRef(null);
 
@@ -21,6 +26,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         }
         return phoneNumber;
     };
+
+    const user = "codingping";
 
     const activeEnter = (e, type) => {
         if (e.key === "Enter") {
@@ -56,14 +63,27 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     };
 
     const divClear = () => {
-        setSubmittedTexts([]); // 수신 번호 배열 초기화
+        setSubmittedTexts([]);
     };
 
-    const saveAddressBook = () => {
+    const saveAddressBook = async () => {
         const uniqueNumbers = submittedTexts.filter((number) => !addressBook.includes(number));
+
         if (uniqueNumbers.length > 0) {
-            setAddressBook((prevAddressBook) => [...prevAddressBook, ...uniqueNumbers]);
-            alert("주소록 저장 완료");
+            try {
+                const firestoreCollection = new FirestoreCollection("contact");
+                const documents = await firestoreCollection.read(user);
+                let existingNumbers = documents.length > 0 ? documents[0].number || [] : [];
+
+                const updatedNumbers = [...new Set([...existingNumbers, ...uniqueNumbers])];
+                await firestoreCollection.update(user, { number: updatedNumbers });
+
+                setAddressBook((prevAddressBook) => [...new Set([...prevAddressBook, ...uniqueNumbers])]);
+                alert("주소록 저장 완료");
+            } catch (error) {
+                console.error("Error saving to Firestore:", error);
+                alert("주소록 저장 중 오류가 발생했습니다.");
+            }
         } else {
             alert("새로운 번호가 없습니다.");
         }
@@ -87,34 +107,82 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
         });
     }, [setSubmittedTexts]);
 
-    const handleOpenAddressBookPopup = () => {
-        if (!addressBookPopupRef.current || addressBookPopupRef.current.closed) {
-            const newWindow = window.open("", "", "width=600,height=600");
+    const handleOpenAddressBookPopup = async () => {
+        try {
+            const firestoreCollection = new FirestoreCollection("contact");
+            const documents = await firestoreCollection.read(user);
+            const numbersFromDB = documents.flatMap(doc => doc.number || []);
+            setAddressBook(numbersFromDB);
 
-            if (newWindow) {
-                newWindow.document.title = "주소록 팝업 창";
-                const div = newWindow.document.createElement("div");
-                newWindow.document.body.appendChild(div);
+            if (!addressBookPopupRef.current || addressBookPopupRef.current.closed) {
+                const newWindow = window.open("", "", "width=600,height=600");
 
-                const root = createRoot(div);
-                root.render(
-                    <AddressBook
-                        addressBook={addressBook}
-                        setAddressBook={setAddressBook}
-                        onClose={() => newWindow.close()}
-                        addAllToSubmittedTexts={addAllToSubmittedTexts}
-                        addToSubmittedTexts={addToSubmittedTexts}
-                    />
-                );
+                if (newWindow) {
+                    newWindow.document.title = "주소록 팝업 창";
+                    const div = newWindow.document.createElement("div");
+                    newWindow.document.body.appendChild(div);
 
-                addressBookPopupRef.current = newWindow;
+                    const root = createRoot(div);
+                    root.render(
+                        <AddressBook
+                            addressBook={numbersFromDB}
+                            setAddressBook={setAddressBook}
+                            onClose={() => newWindow.close()}
+                            addAllToSubmittedTexts={addAllToSubmittedTexts}
+                            addToSubmittedTexts={addToSubmittedTexts}
+                        />
+                    );
 
-                newWindow.onbeforeunload = () => {
-                    addressBookPopupRef.current = null;
-                };
+                    addressBookPopupRef.current = newWindow;
+                    newWindow.onbeforeunload = () => {
+                        addressBookPopupRef.current = null;
+                    };
+                }
+            } else {
+                addressBookPopupRef.current.focus();
             }
-        } else {
-            addressBookPopupRef.current.focus();
+        } catch (error) {
+            console.error("Error fetching address book from Firestore:", error);
+            alert("주소록을 불러오는 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleOpenRecentAddressPopup = async () => {
+        try {
+            const firestoreCollection = new FirestoreCollection("latest_contact");
+            const documents = await firestoreCollection.read(user);
+            const numbersFromDB = documents.flatMap(doc => doc.latest_number || []);
+            setAddressBook(numbersFromDB);
+
+            if (!recentAddressPopupRef.current || recentAddressPopupRef.current.closed) {
+                const newWindow = window.open("", "", "width=600,height=600");
+
+                if (newWindow) {
+                    newWindow.document.title = "최근 전송 팝업 창";
+                    const div = newWindow.document.createElement("div");
+                    newWindow.document.body.appendChild(div);
+
+                    const root = createRoot(div);
+                    root.render(
+                        <RecentAddress
+                            recentNumbers={numbersFromDB}
+                            onClose={() => newWindow.close()}
+                            addAllToSubmittedTexts={addAllToSubmittedTexts}
+                            addToSubmittedTexts={addToSubmittedTexts}
+                        />
+                    );
+
+                    recentAddressPopupRef.current = newWindow;
+                    newWindow.onbeforeunload = () => {
+                        recentAddressPopupRef.current = null;
+                    };
+                }
+            } else {
+                recentAddressPopupRef.current.focus();
+            }
+        } catch (error) {
+            console.error("Error fetching addressbook from Firestore:", error);
+            alert("주소록을 불러오는 중 오류가 발생했습니다.");
         }
     };
 
@@ -162,14 +230,12 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 />
             );
         }
-    }, [addressBook, addAllToSubmittedTexts, addToSubmittedTexts]); // 의존성 배열에 추가
+    }, [addressBook, addAllToSubmittedTexts, addToSubmittedTexts]);
 
     const handleSendMessage = async () => {
         try {
-            // 수신 번호들을 쉼표로 구분된 문자열로 변환
             const toNumbers = submittedOriginalTexts;
-    
-            // API 요청 보내기 (response 변수 제거)
+
             await axios.post(`${process.env.REACT_APP_API_URL}/send_message_api/send_message`, {
                 title,
                 fromNumber,
@@ -178,18 +244,42 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 generatedImage,
             });
 
+
+            try {
+                const firestoreCollection = new FirestoreCollection("latest_contact");
+                const documents = await firestoreCollection.read(user);
+                let latestNumbers = documents.length > 0 ? documents[0].latest_number || [] : [];
+
+                toNumbers.forEach((num) => {
+                    latestNumbers = latestNumbers.filter((existingNum) => existingNum !== num);
+                    latestNumbers.push(num);
+                });
+
+                const newNumbers = toNumbers.filter((num) => !latestNumbers.includes(num));
+                latestNumbers = [...latestNumbers, ...newNumbers];
+
+                if (latestNumbers.length > 10) {
+                    latestNumbers = latestNumbers.slice(latestNumbers.length - 10);
+                }
+
             setRecentNumbers((prev) => [...new Set([...prev, ...submittedTexts])]);
             alert(`Message Sent!`);
 
+
+                await firestoreCollection.update(user, { latest_number: latestNumbers });
+                alert("Message Sent and Firestore latest_number updated!");
+            } catch (error) {
+                console.error("Error updating Firestore latest_number:", error);
+                alert("Failed to update Firestore latest_number.");
+            }
         } catch (error) {
-            console.error("Error sending message: ", error);
+            console.error("Error sending message:", error);
             alert("Failed to send Message");
         }
     };
 
     return (
         <div>
-            {/* UI 그대로 유지 */}
             <h3>{"발신번호 설정"}</h3>
             <textarea
                 className="textarea"
@@ -217,7 +307,6 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 cols={50}
                 rows={1}
             ></textarea>
-
             <h3>{"받는 사람"}</h3>
             <div className="receiver">
                 {submittedTexts.map((text, index) => (
