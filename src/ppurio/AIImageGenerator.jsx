@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function AIImageGenerator({ setGeneratedImage }) {
+function AIImageGenerator({ setGeneratedImage, popupWindow }) {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [instruction, setInstruction] = useState('');
@@ -41,11 +41,11 @@ function AIImageGenerator({ setGeneratedImage }) {
         const imageUrl = `${data.imageUrl}?t=${timestamp}`;
         setResultImage(imageUrl);
       } else {
-        alert('이미지 생성 실패: ' + data.error);
+        popupWindow.alert('이미지 생성 실패: ' + data.error);
       }
     } catch (error) {
       console.error('오류 발생:', error);
-      alert('서버 요청 중 오류가 발생했습니다.');
+      popupWindow.alert('서버 요청 중 오류가 발생했습니다.');
     }
   };
 
@@ -53,9 +53,9 @@ function AIImageGenerator({ setGeneratedImage }) {
   const handleUseImage = () => {
     if (resultImage) {
       setGeneratedImage(resultImage);
-      alert('이미지가 메인 페이지로 전송되었습니다!');
+      popupWindow.alert('이미지가 메인 페이지로 전송되었습니다!');
     } else {
-      alert('생성된 이미지가 없습니다.');
+      popupWindow.alert('생성된 이미지가 없습니다.');
     }
   };
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FirestoreCollection from './FirestoreCollection';
 
 const styles = {
   appContainer: {
@@ -121,7 +122,7 @@ const styles = {
   },
 };
 
-function AIMessageGenerator({ setInputMessage }) {
+function AIMessageGenerator({ setInputMessage, popupWindow }) {
   const [message, setMessage] = useState('');
   const [keywords, setKeywords] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -142,12 +143,12 @@ function AIMessageGenerator({ setInputMessage }) {
       if (response.ok && Array.isArray(data.result_message)) {
         setGeneratedMessages(data.result_message);
       } else {
-        alert('문자 생성 실패: ' + (data.error || '알 수 없는 오류'));
+        popupWindow.alert('문자 생성 실패: ' + (data.error || '알 수 없는 오류'));
         setGeneratedMessages([]);
       }
     } catch (error) {
       console.error('오류 발생:', error);
-      alert('서버 요청 중 오류가 발생했습니다.');
+      popupWindow.alert('서버 요청 중 오류가 발생했습니다.');
       setGeneratedMessages([]);
     }
   };
@@ -157,7 +158,7 @@ function AIMessageGenerator({ setInputMessage }) {
       setKeywords([...keywords, keywordInput.trim()]);
       setKeywordInput('');
     } else if (keywords.length >= 3) {
-      alert('최대 3개의 키워드만 추가할 수 있습니다.');
+      popupWindow.alert('최대 3개의 키워드만 추가할 수 있습니다.');
     }
   };
 
@@ -172,7 +173,13 @@ function AIMessageGenerator({ setInputMessage }) {
   // "메시지 사용" 버튼 클릭 시 메인 화면으로 메시지 전송
   const handleUseMessage = (msg) => {
     setInputMessage(msg);
-    alert("메시지가 메인 화면으로 전송되었습니다!");
+    popupWindow.alert("메시지가 메인 화면으로 전송되었습니다!");
+  };
+
+  const handleSaveMessage = async (msg) => {
+    const firestoreCollection = new FirestoreCollection("latestMessage"); // 여기에서 객체 생성
+    const user = "codingping";
+    firestoreCollection.addMessageToArray(user, msg);
   };
 
   return (
@@ -223,8 +230,8 @@ function AIMessageGenerator({ setInputMessage }) {
                 <p>{msg}</p>
                 <div style={styles.buttonGroup}>
                   <button onClick={() => handleDeleteMessage(index)} style={styles.messageButton}>삭제</button>
-                  <button onClick={() => alert('메시지가 저장되었습니다!')} style={styles.messageButton}>내 문자함 저장</button>
-                  <button onClick={() => handleUseMessage(msg)}>메시지 사용</button>
+                  <button onClick={() => handleSaveMessage(msg)} style={styles.messageButton}>내 문자함 저장</button>
+                  <button onClick={() => handleUseMessage(msg)} style={styles.messageButton}>메시지 사용</button>
                 </div>
               </div>
             ))

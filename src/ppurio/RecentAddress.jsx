@@ -1,5 +1,4 @@
 import React from "react";
-import FirestoreCollection from "./FirestoreCollection.js";
 
 const container = {
     background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
@@ -45,30 +44,29 @@ const individualButton = {
     marginLeft: "10px",
 };
 
-function AddressBook({ addressBook, setAddressBook, onClose, addAllToSubmittedTexts, addToSubmittedTexts }) {
+function RecentAddress({ recentNumbers, onClose, addToSubmittedTexts, addAllToSubmittedTexts }) {
     const handleAddContact = (contact) => {
         addToSubmittedTexts(contact); // 중복 여부는 addToSubmittedTexts에서 처리
     };
 
-    const handleDeleteAllContacts = async () => {
-       	try {
-            const firestoreCollection = new FirestoreCollection("contact");
-            const user = "codingping"; // 사용자 식별자
-            await firestoreCollection.update(user, { number: [] });
-            setAddressBook([]);
-            alert("주소록이 초기화되었습니다.");
-        } catch (error) {
-            console.error("Error clearing address book in Firestore:", error);
-            alert("주소록 초기화 중 오류가 발생했습니다.");
+    const handleClearRecentNumbers = () => {
+        if (recentNumbers.length === 0) {
+            alert("최근 전송 목록이 비어 있습니다.");
+            return;
+        }
+        const confirmClear = window.confirm("최근 전송 목록을 삭제하시겠습니까?");
+        if (confirmClear) {
+            addAllToSubmittedTexts([]); // Clear all recent numbers
         }
     };
+
     return (
         <div style={container}>
             <div style={addressBookArea}>
-                <h3>{"주소록"}</h3>
-                <div className="address-book">
-                    {addressBook.length > 0 ? (
-                        addressBook.map((contact, index) => (
+                <h3>{"최근 전송"}</h3>
+                <div className="recent-numbers">
+                    {recentNumbers.length > 0 ? (
+                        recentNumbers.map((contact, index) => (
                             <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
                                 <p style={{ margin: 0 }}>{contact}</p>
                                 <button style={individualButton} onClick={() => handleAddContact(contact)}>
@@ -77,22 +75,21 @@ function AddressBook({ addressBook, setAddressBook, onClose, addAllToSubmittedTe
                             </div>
                         ))
                     ) : (
-                        <p>{"주소록이 비어 있습니다."}</p>
+                        <p>{"최근 전송된 번호가 없습니다."}</p>
                     )}
                 </div>
-                <button style={gradientButton} onClick={() => addAllToSubmittedTexts(addressBook)}>Add All</button>
-                <button
-                    style={gradientButton}
-                    onClick={() => {
-                        handleDeleteAllContacts();
-                    }}
-                >
-                    Delete All
+                <button style={gradientButton} onClick={() => addAllToSubmittedTexts(recentNumbers)}>
+                    Add All
                 </button>
-                <button style={gradientButton} onClick={onClose}>Close</button>
+                <button style={gradientButton} onClick={handleClearRecentNumbers}>
+                    Clear All
+                </button>
+                <button style={gradientButton} onClick={onClose}>
+                    Close
+                </button>
             </div>
         </div>
     );
 }
 
-export default AddressBook;
+export default RecentAddress;

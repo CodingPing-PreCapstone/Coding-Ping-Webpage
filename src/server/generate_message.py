@@ -21,6 +21,7 @@ def translate_result_message(message, keywords, num_examples=3):
     prompt = (
         f"Generate {num_examples} different message templates for '{message}'. output only results."
         f"Include the keywords '{keywords[0], keywords[1], keywords[2]}' where appropriate."
+        f"Each message should be at least 500 bytes in length."
         f"Provide each example in the format '1. ...', '2. ...', '3. ...'."
     )
     response = openai.ChatCompletion.create(

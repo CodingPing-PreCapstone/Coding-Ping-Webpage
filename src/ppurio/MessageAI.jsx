@@ -18,7 +18,7 @@ const container = {
 function MessageAI(props) {
     return (
         <div style={container}>
-            <h3>{"AI 메세지 자동생성 결과"}</h3>
+            <h3>{"AI 메시지 자동생성 결과"}</h3>
             <textarea name="input_keyword" style={textarea} cols={50} rows={30}></textarea>
             <br></br>
         </div>
