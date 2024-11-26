@@ -34,30 +34,22 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
             const isValidPhoneNumber = /^\d{11}$/.test(currentText);
 
             if (!isValidPhoneNumber) {
-                alert("전화번호는 숫자 11자리여야 합니다. 다시 입력하세요.");
-                if (type === "sender") {
-                    setSender("");
-                } else {
-                    setText("");
-                }
+                alert('전화번호는 숫자 11자리여야 합니다. 다시 입력하세요.');
+                type === 'sender' ? setSenderText('') : setText('');
                 return;
             }
 
             const formattedText = formatPhoneNumber(currentText);
 
-            if (type === "sender") {
-                setSender(formattedText);
-                setfromNumber(currentText);
-                setSenderText("");
+            if (type === 'sender') {
+                setFromNumber(formattedText);
+                setSenderText('');
             } else {
-                if (!submittedTexts.includes(formattedText)) {
-                    setSubmittedTexts((prevTexts) => [...prevTexts, formattedText]);
-                    setSubmittedOriginalTexts((prevOriginals) => [...prevOriginals, currentText]);
-                }
-                setText("");
+                setToNumbers((prevNumbers) => [...prevNumbers, formattedText]);
+                setText('');
             }
         }
-    };
+    }
 
     const divClear = () => {
         setSubmittedTexts([]); // 수신 번호 배열 초기화
@@ -275,7 +267,6 @@ const handleSendMessage = async () => {
 
     return (
         <div>
-            {/* UI 그대로 유지 */}
             <h3>{"발신번호 설정"}</h3>
             <textarea
                 className="textarea"
@@ -310,8 +301,8 @@ const handleSendMessage = async () => {
 
             <h3>{"받는 사람"}</h3>
             <div className="receiver">
-                {submittedTexts.map((text, index) => (
-                    <p key={index}>{text}</p>
+                {toNumbers.map((number, index) => (
+                    <p key={index}>{number}</p>
                 ))}
             </div>
             <button type="button" className="gradient-button" onClick={divClear}>
@@ -327,7 +318,7 @@ const handleSendMessage = async () => {
 	        {"메시지 전송"}
             </button>
         </div>
-    );
+    )
 }
 
 export default PhoneSet;

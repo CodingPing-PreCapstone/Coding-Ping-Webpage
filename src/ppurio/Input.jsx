@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { createRoot } from "react-dom/client";
+import MessageAI from "./MessageAI"; // MessageAI 컴포넌트 불러오기
 import AIImageGenerator from "./AIImageGenerator";
 import AIMessageGenerator from "./AIMessageGenerator";
 import SavedImagesPopup from "./SavedImagesPopup";
@@ -54,6 +55,7 @@ function Input({
     const handleOpenImagePopup = () => {
         if (!imagePopupRef.current || imagePopupRef.current.closed) {
             const newWindow = window.open("", "", "width=1600,height=1000");
+
             if (newWindow) {
                 newWindow.document.title = "ImageAI 팝업 창";
                 const div = newWindow.document.createElement("div");
@@ -61,6 +63,7 @@ function Input({
                 const root = createRoot(div);
                 root.render(<AIImageGenerator setGeneratedImage={setGeneratedImage} popupWindow={newWindow}/>);
                 imagePopupRef.current = newWindow;
+
                 newWindow.onbeforeunload = () => {
                     imagePopupRef.current = null;
                 };
@@ -72,7 +75,8 @@ function Input({
 
     const handleOpenMessagePopup = () => {
         if (!messagePopupRef.current || messagePopupRef.current.closed) {
-            const newWindow = window.open("", "", "width=1600,height=1000");
+            const newWindow = window.open("", "", "width=600,height=600");
+
             if (newWindow) {
                 newWindow.document.title = "MessageAI 팝업 창";
                 const div = newWindow.document.createElement("div");
@@ -80,6 +84,7 @@ function Input({
                 const root = createRoot(div);
                 root.render(<AIMessageGenerator setInputMessage={setInputMessage} popupWindow={newWindow}/>);
                 messagePopupRef.current = newWindow;
+
                 newWindow.onbeforeunload = () => {
                     messagePopupRef.current = null;
                 };
@@ -233,14 +238,7 @@ const handleSaveImage = async () => {
                 onChange={(e) => setTitle(e.target.value)}
             ></textarea>
             <br />
-            <textarea
-                name="input_keyword"
-                className="textarea"
-                cols={50}
-                rows={15}
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-            ></textarea>
+            <textarea className="textarea" placeholder={"메시지 내용을 입력해주세요."} value={content} onChange={(e) => setContent(e.target.value)} cols={50} rows={15}></textarea>
             <br />
             <button type="button" className="gradient-button" onClick={handleOpenImagePopup}>
                 {"AI 이미지 자동생성"}
