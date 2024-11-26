@@ -279,7 +279,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
     };
 
     return (
-        <div>
+        <div className="Mainmenu">
             <h3>{"발신번호 설정"}</h3>
             <textarea
                 className="textarea"
@@ -291,6 +291,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 rows={1}
             ></textarea>
             <div className="sender">{sender && <p>{sender}</p>}</div>
+            <br />
+            <br />
             <button type="button" className="gradient-button" onClick={handleOpenAddressBookPopup}>
                 {"주소록"}
             </button>
@@ -307,6 +309,8 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
                 cols={50}
                 rows={1}
             ></textarea>
+            <br />
+            <br />
             <h3>{"받는 사람"}</h3>
             <div className="receiver">
                 {submittedTexts.map((text, index) => (
@@ -319,6 +323,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
             <button type="button" className="gradient-button" onClick={saveAddressBook}>
                 {"주소록 저장"}
             </button>
+            <br />
             <br />
             <br />
             <button type="button" className="gradient-button" onClick={handleSendMessage}>

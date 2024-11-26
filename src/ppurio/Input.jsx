@@ -223,7 +223,7 @@ function Input({
     };
 
     return (
-        <div>
+        <div className="Mainmenu">
             <h3>{"AI 이미지&메세지 자동생성"}</h3>
             <textarea
                 className="textarea"
@@ -256,6 +256,9 @@ function Input({
             <button type="button" className="gradient-button" onClick={handleOpenSavedMessagesPopup}>
                 {"메세지 불러오기"}
             </button>
+            <br />
+            <br />
+            <br />
             <br />
             <br />
             <br />
