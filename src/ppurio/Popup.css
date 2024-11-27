@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+@font-face {
+    font-family: 'Cafe24Dangdanghae';
+    src: url('../fonts/Cafe24Dangdanghae-v2.0.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Cafe24Ohsquare';
+    src: url('../fonts/Cafe24Ohsquare-v2.0.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Cafe24Simplehae';
+    src: url('../fonts/Cafe24Simplehae-v2.0.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'NanumBarunGothic';
+    src: url('../fonts/NanumBarunGothic.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'NanumBrush';
+    src: url('../fonts/NanumBrush.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'NanumMyeongjoExtraBold';
+    src: url('../fonts/NanumMyeongjoExtraBold.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'NanumSquareRoundEB';
+    src: url('../fonts/NanumSquareRoundEB.ttf') format('truetype');
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden; /* 전체 화면을 고정하지만 패널에 스크롤 가능 */
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+}
+
+.container {
+    display: flex;
+    width: 80%;
+    height: 95%;
+    max-height: 850px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.left-panel, .right-panel {
+    height: 100%;
+    overflow-y: auto; /* 스크롤 기능 추가 */
+    padding-right: 10px; /* 스크롤바와 텍스트 간격 확보 */
+}
+
+.left-panel {
+    width: 50%;
+    background-color: #ffffff;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 2px solid #f0f0f0;
+}
+
+.left-panel form {
+    width: 100%;
+    max-width: 400px;
+}
+
+.right-panel {
+    width: 50%;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+input, textarea, select, button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+button {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    font-weight: bold;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.form-group select, 
+.form-group input[type="number"], 
+.form-group input[type="color"] {
+    flex: 1;
+    max-width: 200px;
+}
+
+.form-group input[type="color"] {
+    padding: 0;
+    height: 35px;
+    width: 35px;
+    border: none;
+    margin-left: 10px;
+}
