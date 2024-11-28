@@ -280,7 +280,7 @@ const handleSendMessage = async () => {
             <textarea
                 className="textarea"
                 value={sendertext}
-                placeholder={"발신 번호를 등록해주세요(예시:01012345678)"}
+                placeholder={"발신 번호를 등록해주세요. (예시:01012345678)"}
                 onChange={(e) => setSenderText(e.target.value)}
                 onKeyDown={(e) => activeEnter(e, "sender")}
                 cols={50}
@@ -299,7 +299,7 @@ const handleSendMessage = async () => {
             <textarea
                 className="textarea"
                 value={text}
-                placeholder={"수신 번호를 입력해주세요(예시:01012345678)"}
+                placeholder={"수신 번호를 입력해주세요. (예시:01012345678)"}
                 onChange={(e) => setText(e.target.value)}
                 onKeyDown={(e) => activeEnter(e, "receiver")}
                 cols={50}
