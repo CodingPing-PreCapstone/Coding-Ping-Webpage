@@ -18,11 +18,19 @@ HTML_FOLDER = os.path.join(os.getcwd(), 'static', 'html')
 STATIC_FOLDER = os.path.join(os.getcwd(), 'static')
 
 def translate_result_message(message, keywords, num_examples=3):
+    valid_keywords = [kw for kw in keywords if kw and kw != '키워드 없음']
+
+    # 키워드가 있을 경우 프롬프트에 추가
+    if valid_keywords:
+        keywords_prompt = f"The message must use the keywords {', '.join(f'\'{kw}\'' for kw in valid_keywords)}."
+    else:
+        keywords_prompt = ""
+    # 프롬프트 생성
     prompt = (
-        f"Write a single message for '{message}'."
-        f"The message must use the keywords '{keywords[0]}', '{keywords[1]}', and '{keywords[2]}'"
-        f"The message must contains exactly 7 sentences."
-    )
+        f"Write a single message for '{message}'. "
+        f"{keywords_prompt} "
+        f"The message must contain exactly 7 sentences."
+    )    
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
