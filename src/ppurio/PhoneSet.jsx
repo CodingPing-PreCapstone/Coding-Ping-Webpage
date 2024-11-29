@@ -61,6 +61,7 @@ function PhoneSet({ inputMessage, generatedImage, submittedTexts, setSubmittedTe
 
     const divClear = () => {
         setSubmittedTexts([]); // 수신 번호 배열 초기화
+        setSubmittedOriginalTexts([]); // 원본 번호 배열 초기화
     };
 
     
