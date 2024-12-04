@@ -64,6 +64,7 @@ AI 기술은 인간의 삶에 밀접한 영향을 미치며 다양한 기능을 
 | **서버**            | AWS EC2                          |
 | **주요 기술 스택**    | React, Flask, OpenAI API, 뿌리오 API |
 | **OpenAI 사용 버전** | DALL-E 3 (이미지 생성), GPT-4 Turbo (이미지 내 텍스트 생성), GPT-3.5 Turbo (메시지 생성) |
+<img width="768" alt="시스템 아키텍처" src="https://github.com/user-attachments/assets/256b9a41-9183-4edb-a15d-4afa017ea458">
 <br>
 
 ## 팀원 역할 분담
