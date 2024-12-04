@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# Coding-Ping-Webpage
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 프로젝트 소개
+**3학년 2학기 SW Pre-Capstone Design (뿌리오 - 다우기술)**  
+AI 기술을 활용해 사용자의 요구사항에 알맞은 문자와 이미지를 생성한 후, 이를 뿌리오 문자 서비스와 통합하여 문자 전송이 가능하게 한 서비스입니다.
 
-## Available Scripts
 
-In the project directory, you can run:
+## 프로젝트 개요
+AI 기술은 인간의 삶에 밀접한 영향을 미치며 다양한 기능을 편리하게 제공합니다.  
+이에 단체 문자 전송 서비스인 뿌리오에도 AI 기술을 적용하여, 사용자가 전송하고자 하는 메시지에 어울리는 이미지를 자동으로 생성하고 첨부할 수 있는 서비스를 개발하였습니다.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 실행 화면
+### 1. 초기 화면
+- 메시지 제목 및 내용 직접 입력
+- 전송할 이미지 직접 첨부
+- 메시지, 이미지, 주소록에 대한 데이터 저장 및 불러오기
+- 발신 및 수신 번호 설정
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 2. AI 문자 생성 화면
+- AI 기능을 활용한 문자 생성 요청
+- 메시지 생성을 위한 주요 요구사항 작성
+- 생성된 메시지에 포함하고자 하는 키워드 최대 3개 포함 기능
+- 원하는 메시지가 생성되지 않았다면 재성성 버튼 클릭
 
-### `npm test`
+### 3. AI 이미지 생성 화면
+- AI 기능을 활용한 이미지 생성 요청
+- 키워드, 부가 설명, 화풍을 통한 이미지 생성 요구사항 작성
+- 이미지 내 포함할 텍스트 및 스타일 설정 기능 제공
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 4. AI 이미지 수정 화면
+- 생성된 이미지의 내부 텍스트와 스타일 직접 수정 가능
 
-### `npm run build`
+### 5. 최종 메시지 전송 화면
+- 모든 정보를 입력한 후, 메시지 전송 버튼을 통해 메시지 전송 완료
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 기대 효과
+- **AI를 활용한 이미지 생성**: 사용자가 전송하려는 문자에 적합한 이미지를 자동으로 생성
+- **텍스트 출력 문제 해결**: AI 이미지 생성 시 한글 텍스트 출력 문제를 해결
+- **서비스 만족도 향상**: 적절한 이미지를 직접 검색하거나, 이미지 내 텍스트를 별도로 삽입할 필요 없이 효율적인 문자 전송 가능
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## 주요 적용 기술 및 구조
+| **항목**             | **내용**                           |
+|---------------------|-----------------------------------|
+| **개발 언어**        | Python, HTML, JavaScript         |
+| **개발 도구**        | Visual Studio Code               |
+| **데이터베이스**     | Firebase Firestore               |
+| **서버**            | AWS EC2                          |
+| **주요 기술 스택**    | React, Flask, OpenAI API, 뿌리오 API |
+| **OpenAI 사용 버전** | DALL-E 3 (이미지 생성), GPT-4 Turbo (이미지 내 텍스트 생성), GPT-3.5 Turbo (메시지 생성) |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 팀원 역할 분담
+| **이름**  | **역할**                     |
+|----------|-----------------------------|
+| 엄지용     | UI 설계 및 구현                |
+| 성유빈     | AI 이미지 생성 기능 구현          |
+| 석종수     | DB 설계 및 구현                |
+| 양희수     | DB 설계 및 구현                |
+| 조석원     | API 설계 및 구현               |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 실행 방법
+### 사전 조건
+- AWS EC2 인스턴스가 **실행 중**이어야 하며, 해당 인스턴스에 백엔드 서버와 프론트엔드 환경이 설정되어 있어야 합니다.
+- EC2 인스턴스의 **퍼블릭 IP 주소** 또는 도메인이 구성되어 있어야 하며, 보안 그룹에 80, 3000, 5000번 포트가 열려 있어야 합니다.
+- 
+1. **로컬 환경 구성**:
+   - Python, Node.js, Firebase CLI 설치
 
-### Code Splitting
+2. **EC2 인스턴스 환경 확인 및 접속**:
+   - AWS 콘솔에서 EC2 인스턴스가 실행 중인지 확인합니다.
+   - SSH를 통해 EC2 인스턴스에 접속합니다.
+   ```bash
+   ssh -i <key-file.pem> ec2-user@<EC2-Public-IP>
+   cd Coding-Ping-Webpage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. **프론트엔드 환경 실행**:
+   ```bash
+   npm install
+   npm install firebase
+   npm start
 
-### Analyzing the Bundle Size
+4. **백엔드 서버 실행**:
+   ```bash
+   flask run --host=0.0.0.0 --port=5000
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
