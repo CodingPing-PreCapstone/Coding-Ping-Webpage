@@ -58,7 +58,7 @@ AI 기술은 인간의 삶에 밀접한 영향을 미치며 다양한 기능을 
 ## 주요 적용 기술 및 구조
 | **항목**             | **내용**                           |
 |---------------------|-----------------------------------|
-| **개발 언어**        | Python, HTML, JavaScript         |
+| **개발 언어**        | Python3, HTML, JavaScript         |
 | **개발 도구**        | Visual Studio Code               |
 | **데이터베이스**     | Firebase Firestore               |
 | **서버**            | AWS EC2                          |
@@ -100,5 +100,3 @@ AI 기술은 인간의 삶에 밀접한 영향을 미치며 다양한 기능을 
    ```bash
    cd src/server/
    flask run --host=0.0.0.0 --port=5000
-
-
